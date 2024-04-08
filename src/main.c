@@ -1,11 +1,13 @@
 /*
 ** EPITECH PROJECT, 2024
-** Delivery
+** B-PSU-200-LYN-2-1-minishell1-lucas.leclerc
 ** File description:
 ** main
 */
 
-int main(int ac, char **av)
+#include "../include/sh.h"
+
+int main(int ac, char **av, char **env)
 {
-    return 0;
+    return mysh(ac, av, env);
 }
