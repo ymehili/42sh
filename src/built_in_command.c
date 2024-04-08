@@ -7,7 +7,7 @@
 
 #include "../include/sh.h"
 
-int cd_command(infos_s *infos, env_var_s *pwd, char *pwd_tmp, char **split_pwd)
+int cd_command(infos_s *infos, env_var_s *pwd, char *pwd_tmp)
 {
     char *param = infos->input_parse[1];
 
@@ -59,14 +59,13 @@ int cd_func(infos_s *infos)
 {
     char *tmp;
     env_var_s *pwd = get_env_var_linked_ls(infos->env_linked_ls, "PWD");
-    char **split_pwd = split(pwd->val, "/");
     char *pwd_tmp = infos->last_pwd;
 
     if (cd_params_checker(infos->input_parse, infos->last_pwd))
         return 1;
     tmp = infos->last_pwd;
     infos->last_pwd = pwd->val;
-    if (cd_command(infos, pwd, pwd_tmp, split_pwd))
+    if (cd_command(infos, pwd, pwd_tmp))
         return 0;
     if (cd_2(infos, tmp, pwd))
         return 1;

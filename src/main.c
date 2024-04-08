@@ -7,7 +7,7 @@
 
 #include "../include/sh.h"
 
-int main(int ac, char **av, char **env)
+int main(int ac, char **env)
 {
-    return mysh(ac, av, env);
+    return mysh(env);
 }
