@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MYSHELL="$PWD/amazed"
+MYSHELL="$PWD/42sh"
 REFER="/bin/tcsh -f"
 TRAPSIG=0
 exit_code=0

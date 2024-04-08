@@ -62,7 +62,7 @@ unit_tests:
 tests_run: unit_tests
 	./$(TEST_EXECUTABLE)
 
-tests_gcovr: unit_tests
+tests_gcovr: tests_run
 	@gcovr --exclude $(TESTDIR)
 
 re: fclean all
