@@ -1,0 +1,118 @@
+name: Verrification code
+
+
+on :
+
+  push :
+    branches-ignore :
+    - "ga-ignore-*"
+    - "main"
+
+env :
+    EXECUTABLES : ""
+
+
+jobs:
+
+  prevent_push_to_main:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fail if push to main
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "Push to main branch is not allowed please push on the dev branch and if all is okay the automation will do the merge to the main branch"
+            exit 1
+          fi
+
+  extract_executable_name :
+
+    runs-on : ubuntu-latest
+
+    steps :
+      - name : Checkout
+        uses : actions/checkout@v2
+
+      - name : Extract executable name
+        run : |
+          EXECUTABLE_NAME=$(grep -oPm1 'EXECUTABLE\s*:= \K\w+' Makefile) || (echo "Executable not found in Makefile" && exit 1)
+          echo "Executable name: $EXECUTABLE_NAME"
+          echo "EXECUTABLE_NAME=$EXECUTABLE_NAME" >> $GITHUB_ENV
+
+  check_coding_style :
+
+    runs-on : ubuntu-latest
+    container :
+      image: ghcr.io/epitech/coding-style-checker:latest
+
+    steps :
+
+      - name : initial setup
+        uses : actions/checkout@v4
+
+      - name : Check coding style
+        run : |
+          rm -f coding-style-reports.log
+          check.sh $(pwd) $(pwd)
+          cat coding-style-reports.log
+
+      - name : Check coding style errors
+        run : |
+          if [ -f coding-style-reports.log ]; then
+            error_count=0
+            while IFS= read -r line; do
+              error="$(echo $line | cut -d ' ' -f 2-)"
+              file="$(echo $line | cut -d ' ' -f 1 | sed 's|^./||')"
+              severity="$(echo $error | cut -d ':' -f 1)"
+              code="$(echo $error | cut -d ':' -f 2)"
+              line="$(echo $file | cut -d ':' -f 2)"
+              filename="$(echo $file | cut -d ':' -f 1)"
+              echo "::error file=$filename,line=$line,title=$severity coding style error: $filename::$code"
+              error_count=$((error_count+1))
+            done < coding-style-reports.log
+            if [[ $error_count -gt 0 ]]; then
+            exit 1
+            fi
+          fi
+
+
+  check_program_compilation :
+
+    runs-on : ubuntu-latest
+    needs :
+        - check_coding_style
+        - extract_executable_name
+    container :
+      image : epitechcontent/epitest-docker
+
+    steps :
+
+      - name : initial setup
+        uses : actions/checkout@v4
+
+      - name : Check program compilation
+        run : |
+          make
+          for executable in ${{ env.EXECUTABLES }}; do
+            if [ ! -f $executable ]; then
+              exit 1
+            fi
+          done
+
+  check_program_tests :
+      runs-on : ubuntu-latest
+      needs :
+          - check_program_compilation
+      steps :
+
+        - name : initial setup
+          uses : actions/checkout@v4
+
+        - name : run tester
+          run : |
+            OUTPUT=$(make tester)
+            echo "$OUTPUT"
+            if [[ "$OUTPUT" == *"Test failed"* ]]; then
+              exit 1
+            fi

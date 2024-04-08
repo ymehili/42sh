@@ -67,4 +67,4 @@ tests_gcovr: unit_tests
 
 re: fclean all
 
-.PHONY: all clean fclean re unit_tests tests_run tests_gcovr
+.PHONY: all clean fclean re unit_tests tests_run tests_gcovr tester

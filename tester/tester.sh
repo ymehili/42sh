@@ -1,8 +1,9 @@
 #!/bin/bash
 
-MYSHELL="$PWD/42sh"
+MYSHELL="$PWD/amazed"
 REFER="/bin/tcsh -f"
 TRAPSIG=0
+exit_code=0
 
 CAT=`which cat`
 GREP=`which grep`
@@ -106,13 +107,14 @@ load_test()
   else
     if [ $debug -ge 1 ]
     then
-      echo "Test $id ($NAME) : KO - Check output in /tmp/test.$$/$id/" 
+      echo "Test $id ($NAME) : KO - Check output in /tmp/test.$$/$id/"
       $MKDIR -p /tmp/test.$$/$id 2>/dev/null
       $CP /tmp/.shell.$$ /tmp/test.$$/$id/mysh.out
       $CP /tmp/.refer.$$ /tmp/test.$$/$id/tcsh.out
     else
       echo "KO"
     fi
+      exit_code=1
   fi
 }
 
@@ -169,3 +171,5 @@ else
     fi
   fi
 fi
+
+exit $exit_code
