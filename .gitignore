@@ -1,0 +1,16 @@
+*.o
+obj
+*.a
+*.so
+a.out
+*~
+\#*\#
+vgcore.*
+*.gcno
+*.gcda
+unit_tests
+.vscode/*
+.vscode
+coding-style-reports.log
+coding-style-report.log
+42sh
