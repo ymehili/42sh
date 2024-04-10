@@ -12,7 +12,7 @@ Test(my_strncmp, equal_strings)
 {
     char *s1 = "Hello";
     char *s2 = "Hello";
-    int n = 5; 
+    int n = 5;
 
     int result = my_strncmp(s1, s2, n);
     cr_assert_eq(result, 0, "my_strncmp() did not return 0 for equal strings");
@@ -36,4 +36,22 @@ Test(my_strncmp, partial_comparison)
 
     int result = my_strncmp(s1, s2, n);
     cr_assert_eq(result, 0, "my_strncmp() did not return 0 for partial comparison");
+}
+
+Test(my_strcmp, basic_test)
+{
+    char *s1 = "Hello";
+    char *s2 = "Hello";
+
+    int result = my_strcmp(s1, s2);
+    cr_assert_eq(result, 0);
+}
+
+Test(my_strcmp, different_strings)
+{
+    char *s1 = "Hello";
+    char *s2 = "World";
+
+    int result = my_strcmp(s1, s2);
+    cr_assert_neq(result, 0);
 }

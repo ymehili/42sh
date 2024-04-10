@@ -22,6 +22,16 @@ Test(my_memset, basic_test)
     }
 }
 
+Test(my_memset, null_ptr)
+{
+    char *buffer = NULL;
+    int size = 10;
+    char c = 'A';
+    char *result = my_memset(buffer, c, size);
+
+    cr_assert_eq(result, buffer, "my_memset() did not return the pointer to the buffer");
+}
+
 Test(my_malloc, basic_test)
 {
     int size = 10;
