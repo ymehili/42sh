@@ -102,6 +102,17 @@ static int parse_input(infos_t *infos,
     return 0;
 }
 
+static void process_input(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *))
+{
+    free_last_command(infos->input_parse);
+    if (history(infos, infos->input) == 84)
+        return;
+    parse_input(infos, built_in_commands);
+    if (infos->exit_code != 1)
+        infos->history = add_to_history(infos, infos->input);
+}
+
 int mysh(int ac, char **av, char **env)
 {
     size_t buff_size = 32;
@@ -115,11 +126,7 @@ int mysh(int ac, char **av, char **env)
             my_putstr("$> ");
         if (getline(&(infos->input), &buff_size, stdin) == -1)
             break;
-        free_last_command(infos->input_parse);
-        history(infos, infos->input);
-        parse_input(infos, built_in_commands);
-        if (infos->exit_code != 1)
-            infos->history = add_to_history(infos, infos->input);
+        process_input(infos, built_in_commands);
     }
     if (infos->run == 1 && isatty(0) != 0)
         my_putstr("exit\n");

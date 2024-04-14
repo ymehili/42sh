@@ -113,5 +113,6 @@ int my_getnbr(char *str);
 void my_putnbr(int nb);
 int n_command(infos_t *infos, char *command);
 int last_command(infos_t *infos);
+int n_command_before(infos_t *infos, char *command);
 
 #endif /* SH_H_ */

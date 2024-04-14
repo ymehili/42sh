@@ -7,6 +7,14 @@
 
 #include "../include/sh.h"
 
+void history_error(char *command)
+{
+    memmove(&command[0], &command[1], strlen(command));
+    command[strlen(command) - 1] = '\0';
+    my_putstr(command);
+    my_putstr(": Event not found.\n");
+}
+
 int history_bis(infos_t *infos, char *command)
 {
     if (command[0] != '!')
@@ -16,10 +24,8 @@ int history_bis(infos_t *infos, char *command)
     if (command[0] == '!' && my_strn_is_num(command, 1) == 1)
         return n_command(infos, command);
     if (command[0] == '!' && command[1] == '-' &&
-        my_strn_is_num(command, 2) == 1) {
-        printf("Réexécute la n-ième commande précédente.\n");
-        return -1;
-    }
+        my_strn_is_num(command, 2) == 1)
+        return n_command_before(infos, command);
     if (command[0] == '!' && my_strn_is_letter(command, 1)) {
         printf("Réexécute la dernière commande commençant par string.\n");
         return -1;
@@ -45,22 +51,8 @@ int history(infos_t *infos, char *command)
         printf("Référence le dernier argument de la dernière commande.\n");
         return -1;
     }
-    memmove(&command[0], &command[1], strlen(command));
-    my_putstr(command);
-    my_putstr(": Event not found.\n");
+    history_error(command);
     return 84;
-}
-
-int history_func(infos_t *infos)
-{
-    history_t *tmp = infos->history;
-
-    if (tmp == NULL)
-        return 0;
-    for (; tmp->next != NULL; tmp = tmp->next);
-    for (; tmp != NULL; tmp = tmp->prev)
-        printf("%d %s %s", tmp->id, tmp->time, tmp->command);
-    return 0;
 }
 
 history_t *add_to_history(infos_t *infos, char *command)
