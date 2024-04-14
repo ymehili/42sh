@@ -7,6 +7,25 @@
 
 #include "../include/sh.h"
 
+int command_with_string(infos_t *infos, char *command)
+{
+    history_t *tmp = infos->history;
+
+    memmove(&command[0], &command[1], strlen(command));
+    command[strlen(command) - 1] = '\0';
+    for (; tmp != NULL; tmp = tmp->next) {
+        if (my_strncmp(tmp->command, command, my_strlen(command)) == 0) {
+            infos->input = NULL;
+            infos->input = my_strdup(tmp->command);
+            my_putstr(infos->input);
+            return -1;
+        }
+    }
+    my_putstr(command);
+    my_putstr(": Event not found.\n");
+    return 84;
+}
+
 int n_command_before(infos_t *infos, char *command)
 {
     int id = my_getnbr(&command[2]);
@@ -17,7 +36,7 @@ int n_command_before(infos_t *infos, char *command)
         my_putstr(": Event not found.\n");
         return 84;
     }
-    for(id = id - 1; id != 0; id--) {
+    for (id = id - 1; id != 0; id--) {
         if (tmp->next == NULL) {
             my_putnbr(1 - id);
             my_putstr(": Event not found.\n");

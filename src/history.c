@@ -26,10 +26,8 @@ int history_bis(infos_t *infos, char *command)
     if (command[0] == '!' && command[1] == '-' &&
         my_strn_is_num(command, 2) == 1)
         return n_command_before(infos, command);
-    if (command[0] == '!' && my_strn_is_letter(command, 1)) {
-        printf("Réexécute la dernière commande commençant par string.\n");
-        return -1;
-    }
+    if (command[0] == '!' && my_strn_is_letter(command, 1))
+        return command_with_string(infos, command);
     return 0;
 }
 
@@ -51,7 +49,7 @@ int history(infos_t *infos, char *command)
         printf("Référence le dernier argument de la dernière commande.\n");
         return -1;
     }
-    history_error(command);
+    // history_error(command);
     return 84;
 }
 

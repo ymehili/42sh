@@ -114,5 +114,7 @@ void my_putnbr(int nb);
 int n_command(infos_t *infos, char *command);
 int last_command(infos_t *infos);
 int n_command_before(infos_t *infos, char *command);
+void history_error(char *command);
+int command_with_string(infos_t *infos, char *command);
 
 #endif /* SH_H_ */
