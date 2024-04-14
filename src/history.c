@@ -11,8 +11,7 @@ int search_history(infos_t *infos, char *exclamation_mark, char *command)
 {
     int result = 0;
     command_mapping_t history_command[] = {
-        {"!!", last_command},
-        {"!-n", n_command_before},
+        {"!!", last_history}, {"!-", n_history_before}, {"!:", n_history_args}
     };
 
     for (size_t i = 0; i < sizeof(history_command) /
@@ -36,10 +35,10 @@ int history(infos_t *infos, char *command)
         if (result != 0)
             return result;
         if (my_strn_is_letter(exclamation_mark, 1)) {
-            return command_with_string(infos, command);
+            return history_with_string(infos, command);
         }
         if (my_strn_is_num(exclamation_mark, 1)) {
-            return n_command(infos, command);
+            return n_history(infos, command);
         }
         exclamation_mark = strchr(exclamation_mark + 1, '!');
     }

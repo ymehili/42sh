@@ -7,7 +7,7 @@
 
 #include "../include/sh.h"
 
-int command_with_string(infos_t *infos, char *command)
+int history_with_string(infos_t *infos, char *command)
 {
     history_t *tmp = infos->history;
 
@@ -26,7 +26,7 @@ int command_with_string(infos_t *infos, char *command)
     return 84;
 }
 
-int n_command_before(infos_t *infos, char *command)
+int n_history_before(infos_t *infos, char *command)
 {
     int id = my_getnbr(&command[2]);
     history_t *tmp = infos->history;
@@ -50,7 +50,7 @@ int n_command_before(infos_t *infos, char *command)
     return -1;
 }
 
-int n_command(infos_t *infos, char *command)
+int n_history(infos_t *infos, char *command)
 {
     history_t *tmp = infos->history;
     int id = my_getnbr(&command[1]);
@@ -68,7 +68,7 @@ int n_command(infos_t *infos, char *command)
     return 84;
 }
 
-int last_command(infos_t *infos, char *command)
+int last_history(infos_t *infos, char *command)
 {
     history_t *tmp = infos->history;
 

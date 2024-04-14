@@ -102,15 +102,18 @@ static int parse_input(infos_t *infos,
     return 0;
 }
 
-static void process_input(infos_t *infos,
+static int process_input(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN])(infos_t *))
 {
     free_last_command(infos->input_parse);
-    if (history(infos, infos->input) == 84)
-        return;
+    if (history(infos, infos->input) == 84) {
+        infos->exit_code = 1;
+        return 1;
+    }
     parse_input(infos, built_in_commands);
     if (infos->exit_code != 1)
         infos->history = add_to_history(infos, infos->input);
+    return 0;
 }
 
 int mysh(int ac, char **av, char **env)

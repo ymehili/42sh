@@ -111,11 +111,13 @@ int my_strn_is_num(char *str, int n);
 int my_strn_is_letter(char *str, int n);
 int my_getnbr(char *str);
 void my_putnbr(int nb);
-int n_command(infos_t *infos, char *command);
-int last_command(infos_t *infos, char *command);
-int n_command_before(infos_t *infos, char *command);
+int n_history(infos_t *infos, char *command);
+int last_history(infos_t *infos, char *command);
+int n_history_before(infos_t *infos, char *command);
 void history_error(char *command);
-int command_with_string(infos_t *infos, char *command);
+int history_with_string(infos_t *infos, char *command);
+int n_history_args(infos_t *infos, char *command);
+void strn_replace(infos_t *infos, char *replace);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
