@@ -7,50 +7,43 @@
 
 #include "../include/sh.h"
 
-void history_error(char *command)
+int search_history(infos_t *infos, char *exclamation_mark, char *command)
 {
-    memmove(&command[0], &command[1], strlen(command));
-    command[strlen(command) - 1] = '\0';
-    my_putstr(command);
-    my_putstr(": Event not found.\n");
-}
+    int result = 0;
+    command_mapping_t history_command[] = {
+        {"!!", last_command},
+        {"!-n", n_command_before},
+    };
 
-int history_bis(infos_t *infos, char *command)
-{
-    if (command[0] != '!')
-        return 1;
-    if (command[0] == '!' && command[1] == '!')
-        return last_command(infos);
-    if (command[0] == '!' && my_strn_is_num(command, 1) == 1)
-        return n_command(infos, command);
-    if (command[0] == '!' && command[1] == '-' &&
-        my_strn_is_num(command, 2) == 1)
-        return n_command_before(infos, command);
-    if (command[0] == '!' && my_strn_is_letter(command, 1))
-        return command_with_string(infos, command);
+    for (size_t i = 0; i < sizeof(history_command) /
+        sizeof(command_mapping_t); i++) {
+        if (my_strncmp(exclamation_mark, history_command[i].command_str,
+            my_strlen(history_command[i].command_str)) == 0) {
+            result = history_command[i].func(infos, command);
+            return result;
+        }
+    }
     return 0;
 }
 
 int history(infos_t *infos, char *command)
 {
-    int ret = history_bis(infos, command);
+    int result = 0;
+    char *exclamation_mark = strchr(command, '!');
 
-    if (ret == -1)
-        return -1;
-    if (ret == 84)
-        return 84;
-    if (ret == 1)
-        return 1;
-    if (command[0] == '!' && command[1] == ':' && my_strn_is_num(command, 2)) {
-        printf("Accède au n-ième argument de la dernière commande.\n");
-        return -1;
+    while (exclamation_mark != NULL) {
+        result = search_history(infos, exclamation_mark, command);
+        if (result != 0)
+            return result;
+        if (my_strn_is_letter(exclamation_mark, 1)) {
+            return command_with_string(infos, command);
+        }
+        if (my_strn_is_num(exclamation_mark, 1)) {
+            return n_command(infos, command);
+        }
+        exclamation_mark = strchr(exclamation_mark + 1, '!');
     }
-    if (command[0] == '!' && command[1] == '$') {
-        printf("Référence le dernier argument de la dernière commande.\n");
-        return -1;
-    }
-    // history_error(command);
-    return 84;
+    return 0;
 }
 
 history_t *add_to_history(infos_t *infos, char *command)

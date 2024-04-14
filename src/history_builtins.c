@@ -68,7 +68,7 @@ int n_command(infos_t *infos, char *command)
     return 84;
 }
 
-int last_command(infos_t *infos)
+int last_command(infos_t *infos, char *command)
 {
     history_t *tmp = infos->history;
 

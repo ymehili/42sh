@@ -112,9 +112,18 @@ int my_strn_is_letter(char *str, int n);
 int my_getnbr(char *str);
 void my_putnbr(int nb);
 int n_command(infos_t *infos, char *command);
-int last_command(infos_t *infos);
+int last_command(infos_t *infos, char *command);
 int n_command_before(infos_t *infos, char *command);
 void history_error(char *command);
 int command_with_string(infos_t *infos, char *command);
+
+typedef int (*command_func_t)(infos_t *, char *);
+
+typedef struct {
+    char *command_str;
+    command_func_t func;
+} command_mapping_t;
+
+extern command_mapping_t history_command[];
 
 #endif /* SH_H_ */
