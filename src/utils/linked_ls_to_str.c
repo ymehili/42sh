@@ -7,10 +7,10 @@
 
 #include "../../include/sh.h"
 
-char **old_env_to_new(infos_s *infos)
+char **old_env_to_new(infos_t *infos)
 {
     char **new_env = NULL;
-    env_var_s *tmp = infos->env_linked_ls;
+    env_var_t *tmp = infos->env_linked_ls;
     int nb_env = 0;
 
     for (; tmp; tmp = tmp->next)

@@ -123,3 +123,15 @@ TESTS=
   echo 'ls -l'
   echo 'exit 45|cat /etc/resolv.conf'
 [912-END]
+
+[913]
+NAME="Basic test history"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo 'cd ..'
+  echo 'ls -l'
+  echo 'cd /usr'
+  echo 'ls -l'
+  echo 'history'
+[913-END]
