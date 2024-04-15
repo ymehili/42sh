@@ -16,7 +16,7 @@ TEST_EXECUTABLE 	:= unit_tests
 
 SRCDIR 				:= src
 OBJDIR 				:= obj
-TESTDIR 			:= tests
+TESTDIR 			:= tests/
 
 SOURCES_FILES 		:= $(shell find $(SRCDIR) -name '*.c')
 OBJECTS_FILES 		:= $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SOURCES_FILES))
@@ -49,6 +49,7 @@ clean:
 
 fclean: clean
 	@rm -f $(EXECUTABLE)
+	@rm -f tester$(EXECUTABLE)
 
 tester: all
 	@cp $(EXECUTABLE) tester

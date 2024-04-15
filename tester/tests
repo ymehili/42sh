@@ -123,3 +123,94 @@ TESTS=
   echo 'ls -l'
   echo 'exit 45|cat /etc/resolv.conf'
 [912-END]
+
+[913]
+NAME="Basic test history"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo 'cd ..'
+  echo 'ls -l'
+  echo 'cd /usr'
+  echo 'ls -l'
+  echo 'history'
+[913-END]
+
+[914]
+NAME="history with nothing"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo 'history'
+[914-END]
+
+[915]
+NAME="execute last command"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!!\n' | $MYSHELL"
+[915-END]
+
+[916]
+NAME="execute last command with nothing in history"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo '!!'
+[916-END]
+
+[917]
+NAME="search n command in history"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!n\n' | $MYSHELL"
+[917-END]
+
+[918]
+NAME="search n command in history will not exist"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!100\n' | $MYSHELL"
+[918-END]
+
+[919]
+NAME="search n command before last in history"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!-2\n' | $MYSHELL"
+[919-END]
+
+[920]
+NAME="search n command before last in history will not exist"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!-100\n' | $MYSHELL"
+[920-END]
+
+[921]
+NAME="search history with string"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!p\n' | $MYSHELL"
+[921-END]
+
+[922]
+NAME="search history with string will not exist"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!toto\n' | $MYSHELL"
+[922-END]
+
+[923]
+NAME="search args in history"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\nls !:1\n' | $MYSHELL"
+[923-END]
+
+[924]
+NAME="search args in history will not exist"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\nls !:100\n' | $MYSHELL"
+[924-END]

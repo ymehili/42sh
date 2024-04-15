@@ -7,7 +7,7 @@
 
 #include "../include/sh.h"
 
-int is_built_in_command(infos_s *infos, char *command)
+int is_built_in_command(infos_t *infos, char *command)
 {
     for (int i = 0; i < NB_BUILT_IN; i++) {
         if (my_strncmp(command,
@@ -21,8 +21,8 @@ int is_built_in_command(infos_s *infos, char *command)
     return -1;
 }
 
-int exec_built_in(infos_s *infos, int built_in_nb,
-    int (*built_in_commands[NB_BUILT_IN + 1])(infos_s *))
+int exec_built_in(infos_t *infos, int built_in_nb,
+    int (*built_in_commands[NB_BUILT_IN + 1])(infos_t *))
 {
     if (built_in_nb == 3) {
         my_putstr("exit\n");
@@ -31,7 +31,7 @@ int exec_built_in(infos_s *infos, int built_in_nb,
     return built_in_commands[built_in_nb](infos);
 }
 
-int exec_with_path(infos_s *infos)
+int exec_with_path(infos_t *infos)
 {
     char *path_val = get_env_var(infos->env, "PATH");
     char **path_val_ls;
@@ -64,8 +64,8 @@ int status_code(int status)
     return WEXITSTATUS(status);
 }
 
-int execute_command(infos_s *infos,
-    int (*built_in_commands[NB_BUILT_IN + 1])(infos_s *))
+int execute_command(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN + 1])(infos_t *))
 {
     int status = 0;
     pid_t child;

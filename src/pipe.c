@@ -7,7 +7,7 @@
 
 #include "../include/sh.h"
 
-static void wait_childs(infos_s *infos)
+static void wait_childs(infos_t *infos)
 {
     int status = 0;
 
@@ -17,8 +17,8 @@ static void wait_childs(infos_s *infos)
     }
 }
 
-void if_child(infos_s *infos, int i, int pipe_fd[2],
-    int (*built_in_commands[NB_BUILT_IN])(infos_s *))
+void if_child(infos_t *infos, int i, int pipe_fd[2],
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *))
 {
     int built_in_nb = is_built_in_command(infos, infos->input_parse[0]);
 
@@ -40,8 +40,8 @@ void if_child(infos_s *infos, int i, int pipe_fd[2],
     exit(1);
 }
 
-int handle_pipe(infos_s *infos,
-    int (*built_in_commands[NB_BUILT_IN])(infos_s *), char **input)
+int handle_pipe(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *), char **input)
 {
     int pipe_fd[2];
 
