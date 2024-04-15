@@ -21,8 +21,6 @@ int n_history_args(infos_t *infos, char *command)
     for (int current_id = 0; token != NULL; current_id++) {
         if (current_id == id) {
             strn_replace(infos, token);
-            my_putstr(infos->input);
-            my_putstr("\n");
             return -1;
         }
         token = strtok(NULL, " ");

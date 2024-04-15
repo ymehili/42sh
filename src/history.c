@@ -34,12 +34,10 @@ int history(infos_t *infos, char *command)
         result = search_history(infos, exclamation_mark, command);
         if (result != 0)
             return result;
-        if (my_strn_is_letter(exclamation_mark, 1)) {
+        if (my_strn_is_letter(exclamation_mark, 1))
             return history_with_string(infos, command);
-        }
-        if (my_strn_is_num(exclamation_mark, 1)) {
+        if (my_strn_is_num(exclamation_mark, 1))
             return n_history(infos, command);
-        }
         exclamation_mark = strchr(exclamation_mark + 1, '!');
     }
     return 0;
