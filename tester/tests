@@ -214,3 +214,31 @@ SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\nls !:100\n' | $MYSHELL"
 [924-END]
+
+[925]
+NAME="search last history args"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\nls !$\n' | $MYSHELL"
+[925-END]
+
+[926]
+NAME="search last history args will not exist"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls \nls !$\n' | $MYSHELL"
+[926-END]
+
+[927]
+NAME="search all history args"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l -a\nls !*\n' | $MYSHELL"
+[927-END]
+
+[928]
+NAME="search all history args will not exist"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls\nls !*\n' | $MYSHELL"
+[928-END]

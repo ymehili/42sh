@@ -114,10 +114,11 @@ void my_putnbr(int nb);
 int n_history(infos_t *infos, char *command);
 int last_history(infos_t *infos, char *command);
 int n_history_before(infos_t *infos, char *command);
-void history_error(char *command);
 int history_with_string(infos_t *infos, char *command);
 int n_history_args(infos_t *infos, char *command);
 void strn_replace(infos_t *infos, char *replace);
+int last_history_args(infos_t *infos, char *command);
+int all_history_args(infos_t *infos, char *command);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
