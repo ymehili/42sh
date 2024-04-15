@@ -13,7 +13,7 @@
     #include <sys/types.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
-    #define NB_BUILT_IN 6
+    #define NB_BUILT_IN 7
     #include <limits.h>
     #include <signal.h>
     #include "errno.h"
@@ -43,6 +43,7 @@ struct infos_s {
     char **env;
     char *last_pwd;
     env_var_t *env_linked_ls;
+    env_var_t *var_ls;
     char *actual_path;
     char *input;
     char **input_parse;
@@ -103,6 +104,8 @@ int exec_with_path(infos_t *infos);
 char *save_redirection(infos_t *infos, char *input);
 int is_redirection(infos_t *infos, char *str);
 void handle_redirection(infos_t *infos);
+int is_num(char str);
+int is_alpha(char str);
 
 history_t *add_to_history(infos_t *infos, char *command);
 int history_func(infos_t *infos);
@@ -118,6 +121,7 @@ void history_error(char *command);
 int history_with_string(infos_t *infos, char *command);
 int n_history_args(infos_t *infos, char *command);
 void strn_replace(infos_t *infos, char *replace);
+int set_func(infos_t *infos);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
