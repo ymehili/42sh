@@ -130,4 +130,13 @@ typedef struct {
 
 extern command_mapping_t history_command[];
 
+typedef struct history_args_s {
+    infos_t *infos;
+    char *token;
+    int current_id;
+    int start_id;
+    int end_id;
+    char *args;
+} history_args_t;
+
 #endif /* SH_H_ */
