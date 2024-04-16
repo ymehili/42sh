@@ -276,3 +276,41 @@ TESTS=
 echo 'set 1test'
 echo 'set ['
 [932-END]
+
+[933]
+NAME="test variable substitution"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo 'set test=1'
+echo 'echo $test'
+echo 'echo $test$test'
+[933-END]
+
+[934]
+NAME="test variable substitution error"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo 'set test=1'
+echo 'echo $test'
+echo 'echo $test2'
+[934-END]
+
+[935]
+NAME="test set var read only"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo 'set -r test=1'
+echo 'echo $test'
+[935-END]
+
+[936]
+NAME="test set new value to read only var "
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo 'set test=2'
+echo 'echo $test'
+[936-END]

@@ -39,9 +39,16 @@ int update_var(infos_t *infos, env_var_t *var)
     env_var_t *elem = infos->var_ls;
 
     for (; elem != NULL; elem = elem->next) {
-        if (my_strcmp(elem->name, var->name) == 0) {
+        if (my_strcmp(elem->name, var->name) == 0 && elem->read_only == 0) {
             free(elem->val);
             elem->val = my_strdup(var->val);
+            free(var->name);
+            free(var->val);
+            free(var);
+            return 1;
+        }
+        if (my_strcmp(elem->name, var->name) == 0 && elem->read_only == 1) {
+            printf("set: $%s is read-only.\n", var->name);
             free(var->name);
             free(var->val);
             free(var);
@@ -51,10 +58,11 @@ int update_var(infos_t *infos, env_var_t *var)
     return 0;
 }
 
-static void set_new_var(infos_t *infos, int i)
+static int set_new_var(infos_t *infos, int i, int read_only)
 {
     env_var_t *var = NULL;
     int new_var = 1;
+    int output = 0;
 
     var = my_malloc(sizeof(env_var_t));
     var->name = parse_var(infos->input_parse[i], var, &new_var);
@@ -63,26 +71,91 @@ static void set_new_var(infos_t *infos, int i)
         var->val = my_strdup(infos->input_parse[i + 2]);
         i += 2;
     }
-    if (update_var(infos, var) == 0) {
+    var->read_only = read_only;
+    output = update_var(infos, var);
+    if (output == 0) {
         var->next = infos->var_ls;
         if (var->next)
             var->next->prev = var;
         infos->var_ls = var;
     }
+    return output;
+}
+
+int static display_env_bis(infos_t *infos)
+{
+    if (tab_len(infos->input_parse) == 1 ||
+        (tab_len(infos->input_parse) == 2 &&
+        my_strcmp(infos->input_parse[1], "-r") == 0)) {
+        display_env(infos->var_ls, "\t");
+        return 1;
+    }
+    return 0;
 }
 
 int set_func(infos_t *infos)
 {
-    if (tab_len(infos->input_parse) == 1) {
-        display_env(infos->var_ls, "\t");
+    int read_only = 0;
+
+    if (display_env_bis(infos))
         return 0;
-    }
-    for (int i = 1; infos->input_parse[i] != NULL; i++) {
+    if (my_strcmp(infos->input_parse[1], "-r") == 0)
+        read_only = 1;
+    for (int i = 1 + read_only; infos->input_parse[i] != NULL; i++) {
         if (check_var_name(infos->input_parse[i])) {
             infos->exit_code = 1;
             return 1;
         }
-        set_new_var(infos, i);
+        if (set_new_var(infos, i, read_only) == -1) {
+            infos->exit_code = 1;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+env_var_t *get_var(infos_t *infos, char *var_name)
+{
+    env_var_t *elem = infos->var_ls;
+
+    for (; elem != NULL; elem = elem->next) {
+        if (my_strcmp(elem->name, var_name) == 0)
+            return elem;
+    }
+    return NULL;
+}
+
+int change_variable_bis(infos_t *infos, int i)
+{
+    int j = i + 1;
+    char *var_name = NULL;
+    env_var_t *var = NULL;
+
+    for (; infos->input[j] != '\0' && infos->input[j] != ' ' &&
+        infos->input[j] != '\t' && infos->input[j] != '\n' &&
+        infos->input[j] != '$'; j++);
+    if (i == j - 1)
+        return j;
+    var_name = my_malloc(sizeof(char) * (j - i));
+    var_name = my_strncpy(var_name, &infos->input[i + 1], j - i - 1);
+    var = get_var(infos, var_name);
+    if (var == NULL) {
+        printf("%s: Undefined variable.\n", var_name);
+        infos->exit_code = 1;
+        return -1;
+    }
+    infos->input = str_insert_and_replace(infos->input,
+        var->val, i, j);
+    return i + my_strlen(var->val) - 1;
+}
+
+int change_variable(infos_t *infos)
+{
+    for (int i = 0; infos->input[i] != '\0'; i++) {
+        if (infos->input[i] == '$')
+            i = change_variable_bis(infos, i);
+        if (i < 0)
+            return 84;
     }
     return 0;
 }
