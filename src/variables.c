@@ -86,3 +86,49 @@ int set_func(infos_t *infos)
     }
     return 0;
 }
+
+env_var_t *get_var(infos_t *infos, char *var_name)
+{
+    env_var_t *elem = infos->var_ls;
+
+    for (; elem != NULL; elem = elem->next) {
+        if (my_strcmp(elem->name, var_name) == 0)
+            return elem;
+    }
+    return NULL;
+}
+
+int change_variable_bis(infos_t *infos, int i)
+{
+    int j = i + 1;
+    char *var_name = NULL;
+    env_var_t *var = NULL;
+
+    for (; infos->input[j] != '\0' && infos->input[j] != ' ' &&
+        infos->input[j] != '\t' && infos->input[j] != '\n' &&
+        infos->input[j] != '$'; j++);
+    if (i == j - 1)
+        return j;
+    var_name = my_malloc(sizeof(char) * (j - i));
+    var_name = my_strncpy(var_name, &infos->input[i + 1], j - i - 1);
+    var = get_var(infos, var_name);
+    if (var == NULL) {
+        printf("%s: Undefined variable.\n", var_name);
+        infos->exit_code = 1;
+        return -1;
+    }
+    infos->input = str_insert_and_replace(infos->input,
+        var->val, i, j);
+    return i + my_strlen(var->val) - 1;
+}
+
+int change_variable(infos_t *infos)
+{
+    for (int i = 0; infos->input[i] != '\0'; i++) {
+        if (infos->input[i] == '$')
+            i = change_variable_bis(infos, i);
+        if (i < 0)
+            return 84;
+    }
+    return 0;
+}

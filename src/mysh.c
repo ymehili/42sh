@@ -115,6 +115,8 @@ static int process_input(infos_t *infos,
     }
     if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
         infos->history = add_to_history(infos, infos->input);
+    if (change_variable(infos))
+        return 1;
     parse_input(infos, built_in_commands);
     return 0;
 }

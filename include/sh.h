@@ -123,6 +123,8 @@ int n_history_args(infos_t *infos, char *command);
 void strn_replace(infos_t *infos, char *replace);
 int set_func(infos_t *infos);
 int tab_len(char **tab);
+char *str_insert_and_replace(char *str, char *insert, int start, int end);
+env_var_t *get_var(infos_t *infos, char *var_name);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

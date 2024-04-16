@@ -235,3 +235,23 @@ TESTS=
 echo 'set 1test'
 echo 'set ['
 [926-END]
+
+[927]
+NAME="test variable substitution"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo 'set test=1'
+echo 'echo $test'
+echo 'echo $test$test'
+[927-END]
+
+[928]
+NAME="test variable substitution error"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo 'set test=1'
+echo 'echo $test'
+echo 'echo $test2'
+[928-END]
