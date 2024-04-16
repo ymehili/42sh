@@ -94,7 +94,7 @@ int setenv_func(infos_t *infos)
     if (setenv_error_checker(infos->input_parse))
         return 1;
     if (infos->input_parse[1] == NULL) {
-        display_env(infos->env_linked_ls);
+        display_env(infos->env_linked_ls, "=");
         return 0;
     }
     if (elem != NULL)
@@ -138,6 +138,6 @@ int env_func(infos_t *infos)
         my_putstr(": Too many arguments.\n");
         return 1;
     }
-    display_env(infos->env_linked_ls);
+    display_env(infos->env_linked_ls, "=");
     return 0;
 }

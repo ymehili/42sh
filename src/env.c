@@ -16,14 +16,16 @@ char *get_env_var(char **env, char *var_name)
     return NULL;
 }
 
-void display_env(env_var_t *env_ls)
+void display_env(env_var_t *env_ls, char *sep)
 {
     env_var_t *elem = env_ls;
 
+    if (elem == NULL)
+        return;
     for (; elem->next != NULL; elem = elem->next);
     for (; elem != NULL; elem = elem->prev) {
         my_putstr(elem->name);
-        my_putstr("=");
+        my_putstr(sep);
         my_putstr(elem->val);
         my_putstr("\n");
     }

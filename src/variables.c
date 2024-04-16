@@ -31,48 +31,58 @@ static int check_var_name(char *name)
         printf("set: Variable name must begin with a letter.\n");
         return 84;
     }
-    for (int i = 0; name[i] != '\0' && name[i] != '='; i++) {
-        if (is_alpha(name[i]) == 0 && is_num(name[i]) == 0) {
-            printf("set: Variable name must contain "
-                "alphanumeric characters.\n");
-            return 84;
+    return 0;
+}
+
+int update_var(infos_t *infos, env_var_t *var)
+{
+    env_var_t *elem = infos->var_ls;
+
+    for (; elem != NULL; elem = elem->next) {
+        if (my_strcmp(elem->name, var->name) == 0) {
+            free(elem->val);
+            elem->val = my_strdup(var->val);
+            free(var->name);
+            free(var->val);
+            free(var);
+            return 1;
         }
     }
     return 0;
 }
 
-int set_func(infos_t *infos)
+static int set_new_var(infos_t *infos, int i)
 {
     env_var_t *var = NULL;
     int new_var = 1;
 
-    for (int i = 1; infos->input_parse[i] != NULL; i++) {
-        if (check_var_name(infos->input_parse[i]))
-            return 84;
-        var = my_malloc(sizeof(env_var_t));
-        var->name = parse_var(infos->input_parse[i], var, &new_var);
-        if (infos->input_parse[i + 1] != NULL && var->val == NULL &&
-            my_strcmp(infos->input_parse[i + 1], "=") == 0 && new_var == 0) {
-            var->val = my_strdup(infos->input_parse[i + 2]);
-            i += 2;
-        }
+    var = my_malloc(sizeof(env_var_t));
+    var->name = parse_var(infos->input_parse[i], var, &new_var);
+    if (infos->input_parse[i + 1] != NULL && var->val == NULL &&
+        my_strcmp(infos->input_parse[i + 1], "=") == 0 && new_var == 0) {
+        var->val = my_strdup(infos->input_parse[i + 2]);
+        i += 2;
+    }
+    if (update_var(infos, var) == 0) {
         var->next = infos->var_ls;
         if (var->next)
             var->next->prev = var;
         infos->var_ls = var;
     }
-    return 0;
 }
 
-env_var_t *get_var_from_ls(env_var_t *var_ls, char *var_name)
+int set_func(infos_t *infos)
 {
-    env_var_t *elem = var_ls;
-
-    if (var_name == NULL || var_name[0] == '\0')
-        return NULL;
-    for (; elem != NULL; elem = elem->next) {
-        if (my_strncmp(elem->name, var_name, my_strlen(var_name)) == 0)
-            return elem;
+    if (tab_len(infos->input_parse) == 1) {
+        display_env(infos->var_ls, "\t");
+        return 0;
     }
-    return NULL;
+    for (int i = 1; infos->input_parse[i] != NULL; i++) {
+        if (check_var_name(infos->input_parse[i])) {
+            infos->exit_code = 1;
+            return 1;
+        }
+        set_new_var(infos, i);
+    }
+    return 0;
 }

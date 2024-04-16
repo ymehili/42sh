@@ -86,7 +86,7 @@ int setenv_func(infos_t *infos);
 int unsetenv_func(infos_t *infos);
 env_var_t *env_to_linked_ls(char **env);
 env_var_t *get_env_var_linked_ls(env_var_t *env, char *var_name);
-void display_env(env_var_t *env_ls);
+void display_env(env_var_t *env_ls, char *sep);
 int env_func(infos_t *infos);
 int unsetenv_error_checker(char **params);
 int setenv_error_checker(char **params);
@@ -122,6 +122,7 @@ int history_with_string(infos_t *infos, char *command);
 int n_history_args(infos_t *infos, char *command);
 void strn_replace(infos_t *infos, char *replace);
 int set_func(infos_t *infos);
+int tab_len(char **tab);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

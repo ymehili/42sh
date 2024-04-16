@@ -17,6 +17,16 @@ int my_strlen(char *str)
     return i;
 }
 
+int tab_len(char **tab)
+{
+    int i = 0;
+
+    if (tab == NULL)
+        return 0;
+    for (; tab[i] != NULL; i++);
+    return i;
+}
+
 void my_putstr(char *str)
 {
     int size = my_strlen(str);
