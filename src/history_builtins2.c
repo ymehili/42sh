@@ -35,7 +35,6 @@ int all_history_args(infos_t *infos, char *command)
     }
     g_tok = all_history_args_bis(token, g_tok);
     strn_replace(infos, g_tok);
-    my_putstr(infos->input);
     free(g_tok);
     return -1;
 }
@@ -57,7 +56,6 @@ int last_history_args(infos_t *infos, char *command)
     }
     if (last_token != NULL) {
         strn_replace(infos, last_token);
-        my_putstr(infos->input);
         return -1;
     }
     my_putstr("Bad ! arguments selector.\n");
@@ -77,11 +75,27 @@ int n_history_args(infos_t *infos, char *command)
     for (int current_id = 0; token != NULL; current_id++) {
         if (current_id == id) {
             strn_replace(infos, token);
-            my_putstr(infos->input);
-            my_putstr("\n");
             return -1;
         }
         token = strtok(NULL, " ");
+    }
+    my_putstr("Bad ! arguments selector.\n");
+}
+
+int first_history_args(infos_t *infos, char *command)
+{
+    history_t *tmp = infos->history;
+    char *tmp_command = my_strdup(tmp->command);
+    char *token = strtok(tmp_command, " ");
+
+    if (tmp == NULL) {
+        my_putstr("0: Event not found.\n");
+        return 84;
+    }
+    token = strtok(NULL, " ");
+    if (token != NULL) {
+        strn_replace(infos, token);
+        return -1;
     }
     my_putstr("Bad ! arguments selector.\n");
 }

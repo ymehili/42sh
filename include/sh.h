@@ -119,6 +119,7 @@ int n_history_args(infos_t *infos, char *command);
 void strn_replace(infos_t *infos, char *replace);
 int last_history_args(infos_t *infos, char *command);
 int all_history_args(infos_t *infos, char *command);
+int first_history_args(infos_t *infos, char *command);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

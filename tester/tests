@@ -242,3 +242,5 @@ SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS="printf 'cd ..\npwd\ncd /usr\nls\nls !*\n' | $MYSHELL"
 [928-END]
+
+
