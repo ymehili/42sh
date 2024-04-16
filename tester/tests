@@ -214,3 +214,24 @@ SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\nls !:100\n' | $MYSHELL"
 [924-END]
+
+[925]
+NAME="test set builtin"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo 'set test'
+echo 'set tester='
+echo 'set teste= valuee'
+echo 'set tests values'
+echo 'set test2=value2'
+[925-END]
+
+[926]
+NAME="test set builtin error"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo 'set 1test'
+echo 'set ['
+[926-END]
