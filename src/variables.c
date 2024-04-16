@@ -51,7 +51,7 @@ int update_var(infos_t *infos, env_var_t *var)
     return 0;
 }
 
-static int set_new_var(infos_t *infos, int i)
+static void set_new_var(infos_t *infos, int i)
 {
     env_var_t *var = NULL;
     int new_var = 1;

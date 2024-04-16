@@ -76,7 +76,7 @@ int my_char_isalpha(char str);
 char *my_strdup(char *src);
 char **split_first(char *str, char *separators);
 int get_nb_params(char **params);
-char *split_to_str(char **split, char separator, int at_end);
+char *split_to_str(char **split, int at_end);
 
 int mysh(int ac, char **av, char **env);
 int return_error(char *name, char *str, int code);

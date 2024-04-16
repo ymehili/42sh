@@ -7,7 +7,7 @@
 
 #include "../../include/sh.h"
 
-char *split_to_str(char **split, char separator, int at_end)
+char *split_to_str(char **split, int at_end)
 {
     int len = at_end ? 1 : 0;
     char *str;

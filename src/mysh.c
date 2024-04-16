@@ -13,7 +13,7 @@ int return_error(char *name, char *str, int code)
     return code;
 }
 
-infos_t *init_infos(int ac, char **av, char **env)
+infos_t *init_infos(char **env)
 {
     infos_t *infos = my_malloc(sizeof(infos_t));
 
@@ -122,7 +122,7 @@ static int process_input(infos_t *infos,
 int mysh(int ac, char **av, char **env)
 {
     size_t buff_size = 32;
-    infos_t *infos = init_infos(ac, av, env);
+    infos_t *infos = init_infos(env);
     int (*built_in_commands[NB_BUILT_IN])(infos_t *) = {
         &cd_func, &setenv_func, &unsetenv_func, NULL, &env_func, &history_func,
         &set_func

@@ -26,4 +26,5 @@ int n_history_args(infos_t *infos, char *command)
         token = strtok(NULL, " ");
     }
     my_putstr("Bad ! arguments selector.\n");
+    return 0;
 }
