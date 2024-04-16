@@ -255,3 +255,21 @@ echo 'set test=1'
 echo 'echo $test'
 echo 'echo $test2'
 [928-END]
+
+[929]
+NAME="test set var read only"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo 'set -r test=1'
+echo 'echo $test'
+[929-END]
+
+[930]
+NAME="test set new value to read only var "
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo 'set test=2'
+echo 'echo $test'
+[930-END]

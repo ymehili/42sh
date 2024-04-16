@@ -25,6 +25,7 @@ typedef struct env_var_s env_var_t;
 struct env_var_s {
     char *name;
     char *val;
+    int read_only;
     env_var_t *next;
     env_var_t *prev;
 };
