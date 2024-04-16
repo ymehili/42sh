@@ -84,7 +84,7 @@ static int set_new_var(infos_t *infos, int i, int read_only)
 
 int static display_env_bis(infos_t *infos)
 {
-    if (tab_len(infos->input_parse) == 1 || 
+    if (tab_len(infos->input_parse) == 1 ||
         (tab_len(infos->input_parse) == 2 &&
         my_strcmp(infos->input_parse[1], "-r") == 0)) {
         display_env(infos->var_ls, "\t");
