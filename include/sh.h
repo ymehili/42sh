@@ -25,6 +25,7 @@ typedef struct env_var_s env_var_t;
 struct env_var_s {
     char *name;
     char *val;
+    int read_only;
     env_var_t *next;
     env_var_t *prev;
 };
@@ -122,6 +123,8 @@ int n_history_args(infos_t *infos, char *command);
 void strn_replace(infos_t *infos, char *replace);
 int set_func(infos_t *infos);
 int tab_len(char **tab);
+char *str_insert_and_replace(char *str, char *insert, int start, int end);
+env_var_t *get_var(infos_t *infos, char *var_name);
 int last_history_args(infos_t *infos, char *command);
 int all_history_args(infos_t *infos, char *command);
 int first_history_args(infos_t *infos, char *command);
