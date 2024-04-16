@@ -13,7 +13,7 @@ int return_error(char *name, char *str, int code)
     return code;
 }
 
-infos_t *init_infos(int ac, char **av, char **env)
+infos_t *init_infos(char **env)
 {
     infos_t *infos = my_malloc(sizeof(infos_t));
 
@@ -29,6 +29,7 @@ infos_t *init_infos(int ac, char **av, char **env)
     infos->built_in_command_name[3] = my_strdup("exit");
     infos->built_in_command_name[4] = my_strdup("env");
     infos->built_in_command_name[5] = my_strdup("history");
+    infos->built_in_command_name[6] = my_strdup("set");
     infos->exit_code = 0;
     infos->input_fd = STDIN_FILENO;
     infos->run = 1;
@@ -105,8 +106,6 @@ static int parse_input(infos_t *infos,
 static int process_input(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN])(infos_t *))
 {
-    if (my_strcmp(infos->input, "history\n") == 0)
-        infos->history = add_to_history(infos, infos->input);
     free_last_command(infos->input_parse);
     if (history(infos, infos->input) == 84) {
         infos->exit_code = 1;
@@ -114,6 +113,8 @@ static int process_input(infos_t *infos,
     }
     if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
         infos->history = add_to_history(infos, infos->input);
+    if (change_variable(infos))
+        return 1;
     parse_input(infos, built_in_commands);
     return 0;
 }
@@ -121,14 +122,16 @@ static int process_input(infos_t *infos,
 int mysh(int ac, char **av, char **env)
 {
     size_t buff_size = 32;
-    infos_t *infos = init_infos(ac, av, env);
+    infos_t *infos = init_infos(env);
     int (*built_in_commands[NB_BUILT_IN])(infos_t *) = {
-        &cd_func, &setenv_func, &unsetenv_func, NULL, &env_func, &history_func
+        &cd_func, &setenv_func, &unsetenv_func, NULL, &env_func, &history_func,
+        &set_func
     };
 
     while (infos->run == 1) {
+        get_cwd(infos);
         if (isatty(0) != 0)
-            my_putstr("$> ");
+            my_putstr(infos->line_cwd);
         if (getline(&(infos->input), &buff_size, stdin) == -1)
             break;
         process_input(infos, built_in_commands);
