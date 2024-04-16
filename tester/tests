@@ -214,8 +214,49 @@ SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\nls !:100\n' | $MYSHELL"
 [924-END]
-
 [925]
+NAME="search last history args"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\nls !$\n' | $MYSHELL"
+[925-END]
+
+[926]
+NAME="search last history args will not exist"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls \nls !$\n' | $MYSHELL"
+[926-END]
+
+[927]
+NAME="search all history args"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l -a\nls !*\n' | $MYSHELL"
+[927-END]
+
+[928]
+NAME="search all history args will not exist"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls\nls !*\n' | $MYSHELL"
+[928-END]
+
+[929]
+NAME="search plage history args"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l -a\nls !:1-2\n' | $MYSHELL"
+[929-END]
+
+[930]
+NAME="search plage history args will not exist"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'cd ..\npwd\ncd /usr\nls -l -a\nls !:1-100\n' | $MYSHELL"
+[930-END]
+
+[931]
 NAME="test set builtin"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
@@ -225,18 +266,18 @@ echo 'set tester='
 echo 'set teste= valuee'
 echo 'set tests values'
 echo 'set test2=value2'
-[925-END]
+[931-END]
 
-[926]
+[932]
 NAME="test set builtin error"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS=
 echo 'set 1test'
 echo 'set ['
-[926-END]
+[932-END]
 
-[927]
+[933]
 NAME="test variable substitution"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
@@ -244,9 +285,9 @@ TESTS=
 echo 'set test=1'
 echo 'echo $test'
 echo 'echo $test$test'
-[927-END]
+[933-END]
 
-[928]
+[934]
 NAME="test variable substitution error"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
@@ -254,22 +295,22 @@ TESTS=
 echo 'set test=1'
 echo 'echo $test'
 echo 'echo $test2'
-[928-END]
+[934-END]
 
-[929]
+[935]
 NAME="test set var read only"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS=
 echo 'set -r test=1'
 echo 'echo $test'
-[929-END]
+[935-END]
 
-[930]
+[936]
 NAME="test set new value to read only var "
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS=
 echo 'set test=2'
 echo 'echo $test'
-[930-END]
+[936-END]
