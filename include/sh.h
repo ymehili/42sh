@@ -117,12 +117,14 @@ void my_putnbr(int nb);
 int n_history(infos_t *infos, char *command);
 int last_history(infos_t *infos, char *command);
 int n_history_before(infos_t *infos, char *command);
-void history_error(char *command);
 int history_with_string(infos_t *infos, char *command);
 int n_history_args(infos_t *infos, char *command);
 void strn_replace(infos_t *infos, char *replace);
 int set_func(infos_t *infos);
 int tab_len(char **tab);
+int last_history_args(infos_t *infos, char *command);
+int all_history_args(infos_t *infos, char *command);
+int first_history_args(infos_t *infos, char *command);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
@@ -132,5 +134,14 @@ typedef struct {
 } command_mapping_t;
 
 extern command_mapping_t history_command[];
+
+typedef struct history_args_s {
+    infos_t *infos;
+    char *token;
+    int current_id;
+    int start_id;
+    int end_id;
+    char *args;
+} history_args_t;
 
 #endif /* SH_H_ */
