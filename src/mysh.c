@@ -127,8 +127,9 @@ int mysh(int ac, char **av, char **env)
     };
 
     while (infos->run == 1) {
+        get_cwd(infos);
         if (isatty(0) != 0)
-            my_putstr("$> ");
+            my_putstr(infos->line_cwd);
         if (getline(&(infos->input), &buff_size, stdin) == -1)
             break;
         process_input(infos, built_in_commands);

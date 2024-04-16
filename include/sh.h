@@ -42,6 +42,7 @@ typedef struct infos_s infos_t;
 struct infos_s {
     char **env;
     char *last_pwd;
+    char *line_cwd;
     env_var_t *env_linked_ls;
     env_var_t *var_ls;
     char *actual_path;
@@ -143,5 +144,7 @@ typedef struct history_args_s {
     int end_id;
     char *args;
 } history_args_t;
+
+void get_cwd(infos_t *infos);
 
 #endif /* SH_H_ */
