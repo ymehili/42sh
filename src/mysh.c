@@ -33,6 +33,7 @@ infos_t *init_infos(char **env)
     infos->exit_code = 0;
     infos->input_fd = STDIN_FILENO;
     infos->run = 1;
+    save_last_command_in_var(infos, NULL);
     return infos;
 }
 
@@ -106,6 +107,8 @@ static int parse_input(infos_t *infos,
 static int process_input(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN])(infos_t *))
 {
+    char *tmp;
+
     free_last_command(infos->input_parse);
     if (history(infos, infos->input) == 84) {
         infos->exit_code = 1;
@@ -113,8 +116,10 @@ static int process_input(infos_t *infos,
     }
     if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
         infos->history = add_to_history(infos, infos->input);
+    tmp = my_strdup(infos->input);
     if (change_variable(infos))
         return 1;
+    save_last_command_in_var(infos, tmp);
     parse_input(infos, built_in_commands);
     return 0;
 }
