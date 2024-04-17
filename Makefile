@@ -9,7 +9,7 @@
 ##              VARIABLES               ##
 
 CC 					:= gcc
-CFLAGS 				:= -I./include/ -W -Wall -Wextra
+CFLAGS 				:= -I./include/ -W -Wall -Wextra -Wno-unused-parameter
 DFLAGS 				:= -g3
 EXECUTABLE 			:= 42sh
 TEST_EXECUTABLE 	:= unit_tests

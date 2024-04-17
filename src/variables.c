@@ -82,7 +82,7 @@ static int set_new_var(infos_t *infos, int i, int read_only)
     return output;
 }
 
-int static display_env_bis(infos_t *infos)
+static int display_env_bis(infos_t *infos)
 {
     if (tab_len(infos->input_parse) == 1 ||
         (tab_len(infos->input_parse) == 2 &&
