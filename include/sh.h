@@ -13,7 +13,7 @@
     #include <sys/types.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
-    #define NB_BUILT_IN 7
+    #define NB_BUILT_IN 9
     #include <limits.h>
     #include <signal.h>
     #include "errno.h"
@@ -39,6 +39,15 @@ struct history_s {
     history_t *prev;
 };
 
+typedef struct alias_s alias_t;
+
+struct alias_s {
+    char *alias;
+    char *command;
+    alias_t *next;
+    alias_t *prev;
+};
+
 typedef struct infos_s infos_t;
 struct infos_s {
     char **env;
@@ -60,6 +69,7 @@ struct infos_s {
     int input_type;
     int output_type;
     history_t *history;
+    alias_t *alias;
 };
 
 void *my_memset(void *ptr, char c, int size);
@@ -149,5 +159,9 @@ typedef struct history_args_s {
 } history_args_t;
 
 void get_cwd(infos_t *infos);
+
+int alias_func(infos_t *infos);
+int unalias_func(infos_t *infos);
+char *delete_half_circle(char *str);
 
 #endif /* SH_H_ */
