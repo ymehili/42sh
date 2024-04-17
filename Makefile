@@ -46,6 +46,7 @@ clean:
 	@rm -f $(TEST_EXECUTABLE)
 	@rm -f *.gcno
 	@rm -f *.gcda
+	@rm -f vgcore.*
 
 fclean: clean
 	@rm -f $(EXECUTABLE)

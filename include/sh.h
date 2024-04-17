@@ -129,6 +129,8 @@ env_var_t *get_var(infos_t *infos, char *var_name);
 int last_history_args(infos_t *infos, char *command);
 int all_history_args(infos_t *infos, char *command);
 int first_history_args(infos_t *infos, char *command);
+void save_last_command_in_var(infos_t *infos, char *tmp);
+int change_variable(infos_t *infos);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

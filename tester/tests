@@ -314,3 +314,17 @@ TESTS=
 echo 'set test=2'
 echo 'echo $test'
 [936-END]
+
+[937]
+NAME="test var substitution with command"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'ls\necho $_\n' | $MYSHELL"
+[937-END]
+
+[938]
+NAME="test var substitution with command"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'ls\necho $?\n' | $MYSHELL"
+[938-END]
