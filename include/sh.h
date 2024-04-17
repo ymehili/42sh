@@ -13,7 +13,7 @@
     #include <sys/types.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
-    #define NB_BUILT_IN 6
+    #define NB_BUILT_IN 7
     #include <limits.h>
     #include <signal.h>
     #include "errno.h"
@@ -25,6 +25,7 @@ typedef struct env_var_s env_var_t;
 struct env_var_s {
     char *name;
     char *val;
+    int read_only;
     env_var_t *next;
     env_var_t *prev;
 };
@@ -42,7 +43,9 @@ typedef struct infos_s infos_t;
 struct infos_s {
     char **env;
     char *last_pwd;
+    char *line_cwd;
     env_var_t *env_linked_ls;
+    env_var_t *var_ls;
     char *actual_path;
     char *input;
     char **input_parse;
@@ -75,7 +78,7 @@ int my_char_isalpha(char str);
 char *my_strdup(char *src);
 char **split_first(char *str, char *separators);
 int get_nb_params(char **params);
-char *split_to_str(char **split, char separator, int at_end);
+char *split_to_str(char **split, int at_end);
 
 int mysh(int ac, char **av, char **env);
 int return_error(char *name, char *str, int code);
@@ -85,7 +88,7 @@ int setenv_func(infos_t *infos);
 int unsetenv_func(infos_t *infos);
 env_var_t *env_to_linked_ls(char **env);
 env_var_t *get_env_var_linked_ls(env_var_t *env, char *var_name);
-void display_env(env_var_t *env_ls);
+void display_env(env_var_t *env_ls, char *sep);
 int env_func(infos_t *infos);
 int unsetenv_error_checker(char **params);
 int setenv_error_checker(char **params);
@@ -103,6 +106,8 @@ int exec_with_path(infos_t *infos);
 char *save_redirection(infos_t *infos, char *input);
 int is_redirection(infos_t *infos, char *str);
 void handle_redirection(infos_t *infos);
+int is_num(char str);
+int is_alpha(char str);
 
 history_t *add_to_history(infos_t *infos, char *command);
 int history_func(infos_t *infos);
@@ -114,10 +119,18 @@ void my_putnbr(int nb);
 int n_history(infos_t *infos, char *command);
 int last_history(infos_t *infos, char *command);
 int n_history_before(infos_t *infos, char *command);
-void history_error(char *command);
 int history_with_string(infos_t *infos, char *command);
 int n_history_args(infos_t *infos, char *command);
 void strn_replace(infos_t *infos, char *replace);
+int set_func(infos_t *infos);
+int tab_len(char **tab);
+char *str_insert_and_replace(char *str, char *insert, int start, int end);
+env_var_t *get_var(infos_t *infos, char *var_name);
+int last_history_args(infos_t *infos, char *command);
+int all_history_args(infos_t *infos, char *command);
+int first_history_args(infos_t *infos, char *command);
+void save_last_command_in_var(infos_t *infos, char *tmp);
+int change_variable(infos_t *infos);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
@@ -127,5 +140,16 @@ typedef struct {
 } command_mapping_t;
 
 extern command_mapping_t history_command[];
+
+typedef struct history_args_s {
+    infos_t *infos;
+    char *token;
+    int current_id;
+    int start_id;
+    int end_id;
+    char *args;
+} history_args_t;
+
+void get_cwd(infos_t *infos);
 
 #endif /* SH_H_ */

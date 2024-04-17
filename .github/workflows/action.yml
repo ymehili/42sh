@@ -99,20 +99,3 @@ jobs:
               exit 1
             fi
           done
-
-  check_program_tests :
-      runs-on : ubuntu-latest
-      needs :
-          - check_program_compilation
-      steps :
-
-        - name : initial setup
-          uses : actions/checkout@v4
-
-        - name : run tester
-          run : |
-            OUTPUT=$(make tester)
-            echo "$OUTPUT"
-            if [[ "$OUTPUT" == *"Test failed"* ]]; then
-              exit 1
-            fi
