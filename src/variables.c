@@ -82,7 +82,7 @@ static int set_new_var(infos_t *infos, int i, int read_only)
     return output;
 }
 
-int static display_env_bis(infos_t *infos)
+static int display_env_bis(infos_t *infos)
 {
     if (tab_len(infos->input_parse) == 1 ||
         (tab_len(infos->input_parse) == 2 &&
@@ -122,40 +122,22 @@ env_var_t *get_var(infos_t *infos, char *var_name)
         if (my_strcmp(elem->name, var_name) == 0)
             return elem;
     }
-    return NULL;
+    elem = get_env_var_linked_ls(infos->env_linked_ls, var_name);
+    return elem;
 }
 
-int change_variable_bis(infos_t *infos, int i)
+void save_last_command_in_var(infos_t *infos, char *tmp)
 {
-    int j = i + 1;
-    char *var_name = NULL;
-    env_var_t *var = NULL;
+    env_var_t *elem;
 
-    for (; infos->input[j] != '\0' && infos->input[j] != ' ' &&
-        infos->input[j] != '\t' && infos->input[j] != '\n' &&
-        infos->input[j] != '$'; j++);
-    if (i == j - 1)
-        return j;
-    var_name = my_malloc(sizeof(char) * (j - i));
-    var_name = my_strncpy(var_name, &infos->input[i + 1], j - i - 1);
-    var = get_var(infos, var_name);
-    if (var == NULL) {
-        printf("%s: Undefined variable.\n", var_name);
-        infos->exit_code = 1;
-        return -1;
+    if (infos->var_ls == NULL) {
+        infos->var_ls = my_malloc(sizeof(env_var_t));
+        infos->var_ls->name = my_strdup("_");
+        infos->var_ls->val = my_strdup("");
+        return;
     }
-    infos->input = str_insert_and_replace(infos->input,
-        var->val, i, j);
-    return i + my_strlen(var->val) - 1;
-}
-
-int change_variable(infos_t *infos)
-{
-    for (int i = 0; infos->input[i] != '\0'; i++) {
-        if (infos->input[i] == '$')
-            i = change_variable_bis(infos, i);
-        if (i < 0)
-            return 84;
-    }
-    return 0;
+    elem = get_var(infos, "_");
+    if (elem->val)
+        free(elem->val);
+    elem->val = tmp;
 }

@@ -82,10 +82,10 @@ static int handle_token(history_args_t *history_args)
             history_args->end_id) {
             history_args->args[my_strlen(history_args->args)] = '\0';
             strn_replace(history_args->infos, history_args->args);
-            return (-1);
+            return -1;
         }
     }
-    return (0);
+    return 0;
 }
 
 int n_history_args(infos_t *infos, char *command)
@@ -94,22 +94,22 @@ int n_history_args(infos_t *infos, char *command)
     char *tmp_command = my_strdup(tmp->command);
     char *token = strtok(tmp_command, " ");
     int start_id = my_getnbr(&command[2]);
-    int end_id = -1;
     char args[256] = "";
-    history_args_t history = {infos, token, 0, start_id, end_id, args};
+    history_args_t history_args = {infos, token, 0, start_id, -1, args};
 
-    handle_dash(command, &end_id);
+    handle_dash(command, &(history_args.end_id));
     if (tmp == NULL) {
         my_putstr("0: Event not found.\n");
-        return (84);
+        return 84;
     }
-    for (history.current_id = 0; token != NULL; history.current_id++) {
-        if (handle_token(&history) == -1)
+    for (history_args.current_id = 0; history_args.token != NULL;
+        history_args.current_id++) {
+        if (handle_token(&history_args) == -1)
             return -1;
-        token = strtok(NULL, " ");
+        history_args.token = strtok(NULL, " ");
     }
     my_putstr("Bad ! arguments selector.\n");
-    return (84);
+    return 84;
 }
 
 int first_history_args(infos_t *infos, char *command)
