@@ -150,6 +150,7 @@ int mysh(int ac, char **av, char **env)
             break;
         process_input(infos, built_in_commands);
     }
+    free_all(infos);
     if (infos->run == 1 && isatty(0) != 0)
         my_putstr("exit\n");
     return infos->exit_code;
