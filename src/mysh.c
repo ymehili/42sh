@@ -86,13 +86,12 @@ int process_input(infos_t *infos,
 {
     char *tmp;
 
-    // free_last_command(infos->input_parse);
     if (history(infos, infos->input) == 84) {
         infos->exit_code = 1;
         return 1;
     }
     if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
-        infos->history = add_to_history(infos, infos->input);
+        infos->history = add_to_history(infos, my_strdup(infos->input));
     tmp = my_strdup(infos->input);
     if (change_variable(infos))
         return 1;
