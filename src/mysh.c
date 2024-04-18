@@ -13,7 +13,7 @@ int return_error(char *name, char *str, int code)
     return code;
 }
 
-static infos_t *init_infos(int ac, char **av, char **env)
+static infos_t *init_infos(char **env)
 {
     infos_t *infos = my_malloc(sizeof(infos_t));
 
@@ -86,7 +86,7 @@ int process_input(infos_t *infos,
 {
     char *tmp;
 
-    free_last_command(infos->input_parse);
+    // free_last_command(infos->input_parse);
     if (history(infos, infos->input) == 84) {
         infos->exit_code = 1;
         return 1;
