@@ -131,7 +131,7 @@ int last_history(infos_t *infos, char *command);
 int n_history_before(infos_t *infos, char *command);
 int history_with_string(infos_t *infos, char *command);
 int n_history_args(infos_t *infos, char *command);
-void strn_replace(infos_t *infos, char *replace);
+void strn_replace(infos_t *infos, char *replace, char *to_replace);
 int set_func(infos_t *infos);
 int tab_len(char **tab);
 char *str_insert_and_replace(char *str, char *insert, int start, int end);
@@ -165,5 +165,6 @@ void get_cwd(infos_t *infos);
 int alias_func(infos_t *infos);
 int unalias_func(infos_t *infos);
 char *delete_half_circle(char *str);
+int find_alias(infos_t *infos, char *command);
 
 #endif /* SH_H_ */

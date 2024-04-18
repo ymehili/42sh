@@ -124,6 +124,7 @@ static int process_input(infos_t *infos,
     }
     if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
         infos->history = add_to_history(infos, infos->input);
+    find_alias(infos, infos->input);
     tmp = my_strdup(infos->input);
     if (change_variable(infos))
         return 1;
