@@ -76,6 +76,7 @@ char *my_strdup(char *src);
 char **split_first(char *str, char *separators);
 int get_nb_params(char **params);
 char *split_to_str(char **split, char separator, int at_end);
+char **strsplit(const char *str, const char *delim);
 
 int mysh(int ac, char **av, char **env);
 int return_error(char *name, char *str, int code);
@@ -118,6 +119,11 @@ void history_error(char *command);
 int history_with_string(infos_t *infos, char *command);
 int n_history_args(infos_t *infos, char *command);
 void strn_replace(infos_t *infos, char *replace);
+int parse_input(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *));
+int process_input(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *));
+int check_pipe(infos_t *infos, char *input);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

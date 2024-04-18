@@ -13,7 +13,7 @@ int return_error(char *name, char *str, int code)
     return code;
 }
 
-infos_t *init_infos(int ac, char **av, char **env)
+static infos_t *init_infos(int ac, char **av, char **env)
 {
     infos_t *infos = my_malloc(sizeof(infos_t));
 
@@ -59,7 +59,7 @@ static int check_pipe_2(char **pipe_commands)
     return nb;
 }
 
-static int check_pipe(infos_t *infos, char *input)
+int check_pipe(infos_t *infos, char *input)
 {
     int nb = 0;
     char **pipe_commands = split(input, "|");
@@ -79,30 +79,7 @@ static int check_pipe(infos_t *infos, char *input)
     return 0;
 }
 
-static int parse_input(infos_t *infos,
-    int (*built_in_commands[NB_BUILT_IN])(infos_t *))
-{
-    char **commands = split(infos->input, ";");
-    char **pipe_commands;
-
-    for (int i = 0; commands[i] != NULL; i++) {
-        pipe_commands = split(commands[i], "|");
-        if (check_pipe(infos, commands[i]))
-            continue;
-        if (pipe_commands[1] != NULL) {
-            handle_pipe(infos, built_in_commands, pipe_commands);
-            continue;
-        }
-        if (is_redirection(infos, commands[i]))
-            commands[i] = save_redirection(infos, commands[i]);
-        infos->input_parse = split(commands[i], " \t\n");
-        if (infos->input_parse[0] != NULL)
-            infos->exit_code = execute_command(infos, built_in_commands);
-    }
-    return 0;
-}
-
-static int process_input(infos_t *infos,
+int process_input(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN])(infos_t *))
 {
     if (my_strcmp(infos->input, "history\n") == 0)
