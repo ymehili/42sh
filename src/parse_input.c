@@ -31,28 +31,41 @@ static int handle_or(infos_t *infos,
     return 1;
 }
 
-static int handle_and_or_pipe_commands(infos_t *infos,
-    int (*built_in_commands[NB_BUILT_IN])(infos_t *), char **commands, int i)
+void handle_inside_paren(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *), char *command,
+    int *orandpipe)
 {
-    char **and_commands = strsplit(commands[i], "&&");
-    char **or_commands = strsplit(commands[i], "||");
-    char **pipe_commands = split(commands[i], "|");
+    char **and_commands = strsplit(command, "&&");
+    char **or_commands = strsplit(command, "||");
+    char **pipe_commands = split(command, "|");
 
-    if (check_pipe(infos, commands[i]))
-        return 1;
+    if (check_pipe(infos, command))
+        *orandpipe = 1;
     if (pipe_commands[1] != NULL) {
         handle_pipe(infos, built_in_commands, pipe_commands);
-        return 1;
+        *orandpipe = 1;
     }
     if (and_commands[1] != NULL) {
         handle_and(infos, built_in_commands, and_commands);
-        return 1;
+        *orandpipe = 1;
     }
     if (or_commands[1] != NULL) {
         handle_or(infos, built_in_commands, or_commands);
-        return 1;
+        *orandpipe = 1;
     }
-    return 0;
+}
+
+static int handle_and_or_pipe_commands(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *), char **commands, int i)
+{
+    char **paren_commands = split_by_parentheses(commands[i]);
+    fflush(stdout);
+    int orandpipe = 0;
+    for (int j = 0; paren_commands[j] != NULL; j++) {
+        handle_inside_paren(infos, built_in_commands, paren_commands[j],
+            &orandpipe);
+    }
+    return orandpipe;
 }
 
 static void handle_redirection_and_execution(infos_t *infos,

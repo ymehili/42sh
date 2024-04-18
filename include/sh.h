@@ -124,6 +124,7 @@ int parse_input(infos_t *infos,
 int process_input(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN])(infos_t *));
 int check_pipe(infos_t *infos, char *input);
+char **split_by_parentheses(char *str);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

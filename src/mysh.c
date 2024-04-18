@@ -84,7 +84,7 @@ int process_input(infos_t *infos,
 {
     if (my_strcmp(infos->input, "history\n") == 0)
         infos->history = add_to_history(infos, infos->input);
-    free_last_command(infos->input_parse);
+    // free_last_command(infos->input_parse);
     if (history(infos, infos->input) == 84) {
         infos->exit_code = 1;
         return 1;
