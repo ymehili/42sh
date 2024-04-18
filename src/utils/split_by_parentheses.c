@@ -41,7 +41,6 @@ char **split_by_parentheses(char *str)
             current[current_index++] = str[i];
         }
     }
-
     result[result_index] = NULL;
     free(current);
     return result;
