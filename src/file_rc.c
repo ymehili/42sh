@@ -11,23 +11,17 @@ char *open_file(char *file_name)
 {
     int fd = open(file_name, O_RDONLY);
     char *buffer;
+    struct stat st;
     int size;
-    off_t size_file;
 
-    if (fd == -1) {
-        perror("open");
+    if (fd == -1)
         return NULL;
-    }
-    size_file = lseek(fd, 0, SEEK_END);
-    lseek(fd, 0, SEEK_SET);
-    buffer = malloc(sizeof(char) * (size_file + 1));
-    if (buffer == NULL) {
-        perror("malloc");
+    stat(file_name, &st);
+    buffer = malloc(sizeof(char) * (st.st_size + 1));
+    if (buffer == NULL)
         return NULL;
-    }
-    size = read(fd, buffer, 4096);
+    size = read(fd, buffer, st.st_size);
     if (size == -1) {
-        perror("read");
         free(buffer);
         return NULL;
     }
