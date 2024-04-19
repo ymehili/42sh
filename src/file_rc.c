@@ -10,9 +10,27 @@
 char *open_file(char *file_name)
 {
     int fd = open(file_name, O_RDONLY);
-    char *buffer = malloc(sizeof(char) * 4096);
-    int size = read(fd, buffer, 4096);
+    char *buffer;
+    int size;
+    off_t size_file;
 
+    if (fd == -1) {
+        perror("open");
+        return NULL;
+    }
+    size_file = lseek(fd, 0, SEEK_END);
+    lseek(fd, 0, SEEK_SET);
+    buffer = malloc(sizeof(char) * (size_file + 1));
+    if (buffer == NULL) {
+        perror("malloc");
+        return NULL;
+    }
+    size = read(fd, buffer, 4096);
+    if (size == -1) {
+        perror("read");
+        free(buffer);
+        return NULL;
+    }
     buffer[size] = '\0';
     return buffer;
 }
@@ -35,10 +53,14 @@ void reset_history(infos_t *infos)
 int file_rc(infos_t *infos, int (*built_in_commands[NB_BUILT_IN])(infos_t *))
 {
     char *rc_file = open_file("42shrc");
-    char *rc_file_copy = strdup(rc_file);
+    char *rc_file_copy;
+    char *line;
     char *saveptr;
-    char *line = strtok_r(rc_file_copy, "\n", &saveptr);
 
+    if (rc_file == NULL)
+        return 84;
+    rc_file_copy = strdup(rc_file);
+   line = strtok_r(rc_file_copy, "\n", &saveptr);
     while (line != NULL) {
         if (line[0] != '\0' && line[0] != '#' && line[0] != '\n') {
             infos->input = NULL;
