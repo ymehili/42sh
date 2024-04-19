@@ -169,6 +169,7 @@ char *delete_half_circle(char *str);
 int find_alias(infos_t *infos, char *command);
 
 int file_rc(infos_t *infos, int (*built_in_commands[NB_BUILT_IN])(infos_t *));
-int process_input(infos_t *infos, int (*built_in_commands[NB_BUILT_IN])(infos_t *));
+int process_input(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *));
 
 #endif /* SH_H_ */

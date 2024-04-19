@@ -124,7 +124,8 @@ int process_input(infos_t *infos,
     }
     if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
         infos->history = add_to_history(infos, infos->input);
-    find_alias(infos, infos->input);
+    if (strncmp(infos->input, "alias", 5) != 0)
+        find_alias(infos, infos->input);
     tmp = my_strdup(infos->input);
     if (change_variable(infos))
         return 1;
@@ -141,6 +142,7 @@ int mysh(int ac, char **av, char **env)
         &cd_func, &setenv_func, &unsetenv_func, NULL, &env_func, &history_func,
         &set_func, &alias_func, &unalias_func
     };
+
     file_rc(infos, built_in_commands);
     while (infos->run == 1) {
         get_cwd(infos);

@@ -34,16 +34,18 @@ void reset_history(infos_t *infos)
 
 int file_rc(infos_t *infos, int (*built_in_commands[NB_BUILT_IN])(infos_t *))
 {
-    char *rc_file = open_file("src/42shrc");
+    char *rc_file = open_file("42shrc");
     char *rc_file_copy = strdup(rc_file);
     char *saveptr;
     char *line = strtok_r(rc_file_copy, "\n", &saveptr);
 
     while (line != NULL) {
-        infos->input = NULL;
-        infos->input = strdup(line);
-        infos->input = my_strcat(infos->input, "\n");
-        process_input(infos, built_in_commands);
+        if (line[0] != '\0' && line[0] != '#' && line[0] != '\n') {
+            infos->input = NULL;
+            infos->input = strdup(line);
+            infos->input = my_strcat(infos->input, "\n");
+            process_input(infos, built_in_commands);
+        }
         line = strtok_r(NULL, "\n", &saveptr);
     }
     reset_history(infos);
