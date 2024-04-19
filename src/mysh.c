@@ -45,16 +45,6 @@ infos_t *init_infos(char **env)
     return infos;
 }
 
-void free_last_command(char **last_command)
-{
-    if (last_command == NULL)
-        return;
-    for (int i = 0; last_command[i] != NULL; i++) {
-        free(last_command[i]);
-    }
-    free(last_command);
-}
-
 static int check_pipe_2(char **pipe_commands)
 {
     char *tmp;
@@ -117,7 +107,6 @@ int process_input(infos_t *infos,
 {
     char *tmp;
 
-    free_last_command(infos->input_parse);
     if (history(infos, infos->input) == 84) {
         infos->exit_code = 1;
         return 1;
