@@ -15,7 +15,7 @@ int history_with_string(infos_t *infos, char *command)
     command[strlen(command) - 1] = '\0';
     for (; tmp != NULL; tmp = tmp->next) {
         if (my_strncmp(tmp->command, command, my_strlen(command)) == 0) {
-            strn_replace(infos, tmp->command);
+            strn_replace(infos, tmp->command, "!");
             return -1;
         }
     }
@@ -42,7 +42,7 @@ int n_history_before(infos_t *infos, char *command)
         }
         tmp = tmp->next;
     }
-    strn_replace(infos, tmp->command);
+    strn_replace(infos, tmp->command, "!");
     return -1;
 }
 
@@ -53,7 +53,7 @@ int n_history(infos_t *infos, char *command)
 
     for (; tmp != NULL; tmp = tmp->next) {
         if (tmp->id == id) {
-            strn_replace(infos, tmp->command);
+            strn_replace(infos, tmp->command, "!");
             return -1;
         }
     }
@@ -70,7 +70,7 @@ int last_history(infos_t *infos, char *command)
         my_putstr("0: Event not found.\n");
         return 84;
     }
-    strn_replace(infos, tmp->command);
+    strn_replace(infos, tmp->command, "!");
     return -1;
 }
 

@@ -13,7 +13,7 @@
     #include <sys/types.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
-    #define NB_BUILT_IN 7
+    #define NB_BUILT_IN 9
     #include <limits.h>
     #include <signal.h>
     #include "errno.h"
@@ -39,6 +39,15 @@ struct history_s {
     history_t *prev;
 };
 
+typedef struct alias_s alias_t;
+
+struct alias_s {
+    char *alias;
+    char *command;
+    alias_t *next;
+    alias_t *prev;
+};
+
 typedef struct infos_s infos_t;
 struct infos_s {
     char **env;
@@ -60,6 +69,7 @@ struct infos_s {
     int input_type;
     int output_type;
     history_t *history;
+    alias_t *alias;
 };
 
 typedef struct split_s {
@@ -89,6 +99,7 @@ char **split_first(char *str, char *separators);
 int get_nb_params(char **params);
 char *split_to_str(char **split, int at_end);
 char **strsplit(const char *str, const char *delim);
+void free_all(infos_t *infos);
 
 int mysh(int ac, char **av, char **env);
 int return_error(char *name, char *str, int code);
@@ -131,7 +142,7 @@ int last_history(infos_t *infos, char *command);
 int n_history_before(infos_t *infos, char *command);
 int history_with_string(infos_t *infos, char *command);
 int n_history_args(infos_t *infos, char *command);
-void strn_replace(infos_t *infos, char *replace);
+void strn_replace(infos_t *infos, char *replace, char *to_replace);
 int parse_input(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN])(infos_t *));
 int process_input(infos_t *infos,
@@ -168,5 +179,14 @@ typedef struct history_args_s {
 } history_args_t;
 
 void get_cwd(infos_t *infos);
+
+int alias_func(infos_t *infos);
+int unalias_func(infos_t *infos);
+char *delete_half_circle(char *str);
+int find_alias(infos_t *infos, char *command);
+
+int file_rc(infos_t *infos, int (*built_in_commands[NB_BUILT_IN])(infos_t *));
+int process_input(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *));
 
 #endif /* SH_H_ */

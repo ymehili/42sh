@@ -13,14 +13,8 @@ int return_error(char *name, char *str, int code)
     return code;
 }
 
-static infos_t *init_infos(char **env)
+static void init_builtins(infos_t *infos)
 {
-    infos_t *infos = my_malloc(sizeof(infos_t));
-
-    infos->input = my_malloc(sizeof(char) * 32);
-    infos->env = env;
-    infos->history = NULL;
-    infos->env_linked_ls = env_to_linked_ls(env);
     infos->built_in_command_name = my_malloc(
         sizeof(char *) * (NB_BUILT_IN + 1));
     infos->built_in_command_name[0] = my_strdup("cd");
@@ -30,21 +24,25 @@ static infos_t *init_infos(char **env)
     infos->built_in_command_name[4] = my_strdup("env");
     infos->built_in_command_name[5] = my_strdup("history");
     infos->built_in_command_name[6] = my_strdup("set");
+    infos->built_in_command_name[7] = my_strdup("alias");
+    infos->built_in_command_name[8] = my_strdup("unalias");
+    return;
+}
+
+infos_t *init_infos(char **env)
+{
+    infos_t *infos = my_malloc(sizeof(infos_t));
+
+    infos->input = my_malloc(sizeof(char) * 32);
+    infos->env = env;
+    infos->history = NULL;
+    infos->env_linked_ls = env_to_linked_ls(env);
+    init_builtins(infos);
     infos->exit_code = 0;
     infos->input_fd = STDIN_FILENO;
     infos->run = 1;
     save_last_command_in_var(infos, NULL);
     return infos;
-}
-
-void free_last_command(char **last_command)
-{
-    if (last_command == NULL)
-        return;
-    for (int i = 0; last_command[i] != NULL; i++) {
-        free(last_command[i]);
-    }
-    free(last_command);
 }
 
 static int check_pipe_2(char **pipe_commands)
@@ -92,6 +90,8 @@ int process_input(infos_t *infos,
     }
     if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
         infos->history = add_to_history(infos, my_strdup(infos->input));
+    if (strncmp(infos->input, "alias", 5) != 0)
+        find_alias(infos, infos->input);
     tmp = my_strdup(infos->input);
     if (change_variable(infos))
         return 1;
@@ -106,9 +106,10 @@ int mysh(int ac, char **av, char **env)
     infos_t *infos = init_infos(env);
     int (*built_in_commands[NB_BUILT_IN])(infos_t *) = {
         &cd_func, &setenv_func, &unsetenv_func, NULL, &env_func, &history_func,
-        &set_func
+        &set_func, &alias_func, &unalias_func
     };
 
+    file_rc(infos, built_in_commands);
     while (infos->run == 1) {
         get_cwd(infos);
         if (isatty(0) != 0)
@@ -117,6 +118,7 @@ int mysh(int ac, char **av, char **env)
             break;
         process_input(infos, built_in_commands);
     }
+    free_all(infos);
     if (infos->run == 1 && isatty(0) != 0)
         my_putstr("exit\n");
     return infos->exit_code;
