@@ -37,7 +37,7 @@ void handle_inside_paren(infos_t *infos,
 {
     char **and_commands = strsplit(command, "&&");
     char **or_commands = strsplit(command, "||");
-    char **pipe_commands = split(command, "|");
+    char **pipe_commands = splitforpipe(command, "|");
 
     if (check_pipe(infos, command))
         *orandpipe = 1;
@@ -59,8 +59,8 @@ static int handle_and_or_pipe_commands(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN])(infos_t *), char **commands, int i)
 {
     char **paren_commands = split_by_parentheses(commands[i]);
-    fflush(stdout);
     int orandpipe = 0;
+
     for (int j = 0; paren_commands[j] != NULL; j++) {
         handle_inside_paren(infos, built_in_commands, paren_commands[j],
             &orandpipe);

@@ -62,6 +62,15 @@ struct infos_s {
     history_t *history;
 };
 
+typedef struct split_s {
+    char **result;
+    int depth;
+    char *current;
+    int current_index;
+    int result_index;
+    int start;
+} split_t;
+
 void *my_memset(void *ptr, char c, int size);
 void *my_malloc(int size);
 void my_putstr(char *str);
@@ -138,6 +147,7 @@ int all_history_args(infos_t *infos, char *command);
 int first_history_args(infos_t *infos, char *command);
 void save_last_command_in_var(infos_t *infos, char *tmp);
 int change_variable(infos_t *infos);
+char **splitforpipe(char *str, char *separators);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
