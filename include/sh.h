@@ -159,6 +159,7 @@ int first_history_args(infos_t *infos, char *command);
 void save_last_command_in_var(infos_t *infos, char *tmp);
 int change_variable(infos_t *infos);
 char **splitforpipe(char *str, char *separators);
+char **shsplit(const char *str);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
@@ -177,6 +178,15 @@ typedef struct history_args_s {
     int end_id;
     char *args;
 } history_args_t;
+
+typedef struct shsplit_s {
+    char *str;
+    int num_tokens;
+    int current_token_size;
+    char quote_char;
+    char **tokens;
+    int token_index;
+} shsplit_t;
 
 void get_cwd(infos_t *infos);
 

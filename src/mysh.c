@@ -51,7 +51,7 @@ static int check_pipe_2(char **pipe_commands)
     int nb = 0;
 
     for (int i = 0; pipe_commands[i] != NULL; i++) {
-        tmp = split(pipe_commands[i], " \t\n")[0];
+        tmp = shsplit(pipe_commands[i])[0];
         if (tmp == NULL || tmp[0] == '\0')
             break;
         nb++;

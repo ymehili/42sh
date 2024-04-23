@@ -60,7 +60,7 @@ static void handle_redirection_and_execution(infos_t *infos,
 {
     if (is_redirection(infos, commands[i]))
         commands[i] = save_redirection(infos, commands[i]);
-    infos->input_parse = split(commands[i], " \t\n");
+    infos->input_parse = shsplit(commands[i]);
     if (infos->input_parse[0] != NULL)
         infos->exit_code = execute_command(infos, built_in_commands);
 }
