@@ -7,14 +7,19 @@
 
 #include "../../include/sh.h"
 
+int is_pipe_operator(char letter, char next_letter)
+{
+    if (letter == '|' && next_letter == '|') {
+        return 0;
+    }
+    return 1;
+}
+
 static int is_separator(char letter, char next_letter, char *separators)
 {
     for (int i = 0; separators[i] != '\0'; i++) {
         if (letter == separators[i]) {
-            if (letter == '|' && next_letter == '|') {
-                return 0;
-            }
-            return 1;
+            return is_pipe_operator(letter, next_letter);
         }
     }
     return 0;
