@@ -20,6 +20,10 @@
     #include <fcntl.h>
     #include <time.h>
     #include <string.h>
+    #include <stdbool.h>
+    #include <sys/select.h>
+    #include <sys/time.h>
+    #include <sys/types.h>
 
 typedef struct env_var_s env_var_t;
 struct env_var_s {
@@ -39,6 +43,16 @@ struct history_s {
     history_t *prev;
 };
 
+typedef struct job_s job_t;
+struct job_s {
+    int pid;
+    int pos;
+    int finish;
+    char *command;
+    char *output_job;
+    job_t *next;
+    job_t *prev;
+};
 typedef struct infos_s infos_t;
 struct infos_s {
     char **env;
@@ -60,6 +74,9 @@ struct infos_s {
     int input_type;
     int output_type;
     history_t *history;
+    int is_a_job;
+    job_t *jobs;
+    job_t *first_jobs;
 };
 
 void *my_memset(void *ptr, char c, int size);
@@ -131,6 +148,12 @@ int all_history_args(infos_t *infos, char *command);
 int first_history_args(infos_t *infos, char *command);
 void save_last_command_in_var(infos_t *infos, char *tmp);
 int change_variable(infos_t *infos);
+
+void check_jobs(infos_t *infos, char ***command, int i);
+char **split_once(char *str, char *separators);
+void start_a_job(infos_t *infos);
+void make_redirection(infos_t *infos, int *pipefd, pid_t child);
+void redirect_into_output(infos_t *infos, int *pipefd);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

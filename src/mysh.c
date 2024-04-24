@@ -33,6 +33,13 @@ infos_t *init_infos(char **env)
     infos->exit_code = 0;
     infos->input_fd = STDIN_FILENO;
     infos->run = 1;
+    infos->is_a_job = 0;
+    infos->jobs = my_malloc(sizeof(job_t));
+    infos->jobs->finish = 0;
+    infos->jobs->pid = 0;
+    infos->jobs->prev = NULL;
+    infos->jobs->next = NULL;
+    infos->first_jobs = infos->jobs;
     save_last_command_in_var(infos, NULL);
     return infos;
 }
@@ -88,6 +95,7 @@ static int parse_input(infos_t *infos,
     char **pipe_commands;
 
     for (int i = 0; commands[i] != NULL; i++) {
+        check_jobs(infos, &commands, i);
         pipe_commands = split(commands[i], "|");
         if (check_pipe(infos, commands[i]))
             continue;
@@ -100,6 +108,7 @@ static int parse_input(infos_t *infos,
         infos->input_parse = split(commands[i], " \t\n");
         if (infos->input_parse[0] != NULL)
             infos->exit_code = execute_command(infos, built_in_commands);
+        infos->is_a_job = 0;
     }
     return 0;
 }

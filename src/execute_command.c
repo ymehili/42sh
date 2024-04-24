@@ -7,6 +7,61 @@
 
 #include "../include/sh.h"
 
+static int launch_command(infos_t *infos, int *pipefd)
+{
+    // if (infos->is_a_job == 1) {
+    //     my_putstr("[");
+    //     my_putnbr(infos->jobs->pos);
+    //     my_putstr("] ");
+    //     // redirect_into_output(infos, pipefd);
+    // }
+    handle_redirection(infos);
+    execve(infos->input_parse[0], infos->input_parse, infos->env);
+    exec_with_path(infos);
+    return_error(infos->input_parse[0], ": Command not found.\n", 1);
+    exit(1);
+}
+
+void check_jobs_status(infos_t *infos)
+{
+    int status;
+    job_t *job = infos->first_jobs;
+    pid_t result;
+
+    while (job != NULL) {
+        if (job->command != NULL) {
+            result = waitpid(job->pid, &status, WNOHANG);
+            if (result > 0) {
+                if (WIFEXITED(status) || WIFSIGNALED(status)) {
+                    job->finish = 1;
+                    my_putstr("[");
+                    my_putnbr(job->pos);
+                    my_putstr("] ");
+                    my_putnbr(job->pid);
+                    my_putstr("\t\t[DONE] ");
+                    my_putstr(job->command);
+                    my_putstr("\n");
+                }
+            }
+        }
+        job = job->next;
+    }
+}
+
+
+static int end_of_execve(infos_t *infos, int *pipefd, pid_t child, int status)
+{
+    close(pipefd[1]);
+    if (infos->is_a_job == 1) {
+        redirect_into_output(infos, pipefd);
+        start_a_job(infos);
+    }
+    else
+        waitpid(child, &status, 0);
+    check_jobs_status(infos);
+    return status_code(status);
+}
+
 int is_built_in_command(infos_t *infos, char *command)
 {
     for (int i = 0; i < NB_BUILT_IN; i++) {
@@ -69,20 +124,30 @@ int execute_command(infos_t *infos,
 {
     int status = 0;
     pid_t child;
+    int pipefd[2];
     int built_in_nb = is_built_in_command(infos, infos->input_parse[0]);
 
     if (built_in_nb != -1)
         return exec_built_in(infos, built_in_nb, built_in_commands);
+    pipe(pipefd);
     child = fork();
     if (child < 0)
         return 84;
     else if (child == 0) {
-        handle_redirection(infos);
-        execve(infos->input_parse[0], infos->input_parse, infos->env);
-        exec_with_path(infos);
-        return_error(infos->input_parse[0], ": Command not found.\n", 1);
-        exit(1);
+        close(pipefd[0]);
+        if (infos->is_a_job == 1) {
+            infos->jobs->pid = getpid();
+            my_putstr("[");
+            my_putnbr(infos->jobs->pos);
+            my_putstr("] ");
+            my_putnbr(infos->jobs->pid);
+            my_putstr("\n");
+            make_redirection(infos, pipefd, child);
+        }
+        launch_command(infos, pipefd);
     }
-    waitpid(child, &status, 0);
-    return status_code(status);
+    if (infos->is_a_job == 1) {
+        infos->jobs->pid = child;
+    }
+    return end_of_execve(infos, pipefd, child, status);
 }
