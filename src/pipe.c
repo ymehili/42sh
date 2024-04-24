@@ -48,7 +48,7 @@ int handle_pipe(infos_t *infos,
     for (int i = 0; i <= infos->nb_pipe; i++) {
         if (is_redirection(infos, input[i]))
             input[i] = save_redirection(infos, input[i]);
-        infos->input_parse = split(input[i], " \t\n");
+        infos->input_parse = shsplit(input[i]);
         if (i != infos->nb_pipe)
             pipe(pipe_fd);
         if (fork() == 0)

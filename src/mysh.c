@@ -51,7 +51,7 @@ static int check_pipe_2(char **pipe_commands)
     int nb = 0;
 
     for (int i = 0; pipe_commands[i] != NULL; i++) {
-        tmp = split(pipe_commands[i], " \t\n")[0];
+        tmp = shsplit(pipe_commands[i])[0];
         if (tmp == NULL || tmp[0] == '\0')
             break;
         nb++;
@@ -59,7 +59,7 @@ static int check_pipe_2(char **pipe_commands)
     return nb;
 }
 
-static int check_pipe(infos_t *infos, char *input)
+int check_pipe(infos_t *infos, char *input)
 {
     int nb = 0;
     char **pipe_commands = split(input, "|");
@@ -79,29 +79,6 @@ static int check_pipe(infos_t *infos, char *input)
     return 0;
 }
 
-static int parse_input(infos_t *infos,
-    int (*built_in_commands[NB_BUILT_IN])(infos_t *))
-{
-    char **commands = split(infos->input, ";");
-    char **pipe_commands;
-
-    for (int i = 0; commands[i] != NULL; i++) {
-        pipe_commands = split(commands[i], "|");
-        if (check_pipe(infos, commands[i]))
-            continue;
-        if (pipe_commands[1] != NULL) {
-            handle_pipe(infos, built_in_commands, pipe_commands);
-            continue;
-        }
-        if (is_redirection(infos, commands[i]))
-            commands[i] = save_redirection(infos, commands[i]);
-        infos->input_parse = split(commands[i], " \t\n");
-        if (infos->input_parse[0] != NULL)
-            infos->exit_code = execute_command(infos, built_in_commands);
-    }
-    return 0;
-}
-
 int process_input(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN])(infos_t *))
 {
@@ -112,7 +89,7 @@ int process_input(infos_t *infos,
         return 1;
     }
     if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
-        infos->history = add_to_history(infos, infos->input);
+        infos->history = add_to_history(infos, my_strdup(infos->input));
     if (strncmp(infos->input, "alias", 5) != 0)
         find_alias(infos, infos->input);
     tmp = my_strdup(infos->input);

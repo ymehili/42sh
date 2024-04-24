@@ -72,6 +72,15 @@ struct infos_s {
     alias_t *alias;
 };
 
+typedef struct split_s {
+    char **result;
+    int depth;
+    char *current;
+    int current_index;
+    int result_index;
+    int start;
+} split_t;
+
 void *my_memset(void *ptr, char c, int size);
 void *my_malloc(int size);
 void my_putstr(char *str);
@@ -89,6 +98,7 @@ char *my_strdup(char *src);
 char **split_first(char *str, char *separators);
 int get_nb_params(char **params);
 char *split_to_str(char **split, int at_end);
+char **strsplit(const char *str, const char *delim);
 void free_all(infos_t *infos);
 
 int mysh(int ac, char **av, char **env);
@@ -133,6 +143,12 @@ int n_history_before(infos_t *infos, char *command);
 int history_with_string(infos_t *infos, char *command);
 int n_history_args(infos_t *infos, char *command);
 void strn_replace(infos_t *infos, char *replace, char *to_replace);
+int parse_input(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *));
+int process_input(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *));
+int check_pipe(infos_t *infos, char *input);
+char **split_by_parentheses(char *str);
 int set_func(infos_t *infos);
 int tab_len(char **tab);
 char *str_insert_and_replace(char *str, char *insert, int start, int end);
@@ -142,6 +158,8 @@ int all_history_args(infos_t *infos, char *command);
 int first_history_args(infos_t *infos, char *command);
 void save_last_command_in_var(infos_t *infos, char *tmp);
 int change_variable(infos_t *infos);
+char **splitforpipe(char *str, char *separators);
+char **shsplit(const char *str);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
@@ -160,6 +178,15 @@ typedef struct history_args_s {
     int end_id;
     char *args;
 } history_args_t;
+
+typedef struct shsplit_s {
+    char *str;
+    int num_tokens;
+    int current_token_size;
+    char quote_char;
+    char **tokens;
+    int token_index;
+} shsplit_t;
 
 void get_cwd(infos_t *infos);
 
