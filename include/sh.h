@@ -167,6 +167,7 @@ int alias_func(infos_t *infos);
 int unalias_func(infos_t *infos);
 char *delete_half_circle(char *str);
 int find_alias(infos_t *infos, char *command);
+void add_alias(infos_t *infos);
 
 int file_rc(infos_t *infos, int (*built_in_commands[NB_BUILT_IN])(infos_t *));
 int process_input(infos_t *infos,
