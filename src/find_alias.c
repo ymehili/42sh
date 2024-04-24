@@ -23,11 +23,12 @@ static void find_alias_bis(alias_t *tmp, infos_t *infos, char *token,
 int find_alias(infos_t *infos, char *command)
 {
     char *command_copy = strdup(command);
-    command_copy[strlen(command_copy) - 1] = '\0';
-    char *token = strtok(command_copy, " ");
+    char *token;
     alias_t *tmp = infos->alias;
     char *alias_command = NULL;
 
+    command_copy[strlen(command_copy) - 1] = '\0';
+    token = strtok(command_copy, " ");
     while (token != NULL) {
         tmp = infos->alias;
         find_alias_bis(tmp, infos, token, alias_command);
