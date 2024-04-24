@@ -90,8 +90,7 @@ int process_input(infos_t *infos,
     }
     if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
         infos->history = add_to_history(infos, my_strdup(infos->input));
-    if (strncmp(infos->input, "alias", 5) != 0)
-        find_alias(infos, infos->input);
+    find_alias(infos, infos->input);
     tmp = my_strdup(infos->input);
     if (change_variable(infos))
         return 1;
