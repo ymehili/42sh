@@ -11,7 +11,7 @@
 Test(strn_replace, basic_test)
 {
     char str[] = "ls !:1";
-    infos_t *infos = malloc(sizeof(infos_t));
+    infos_t *infos = my_malloc(sizeof(infos_t));
     infos->input = str;
 
     strn_replace(infos, "-l");
@@ -22,7 +22,7 @@ Test(strn_replace, basic_test)
 Test(strn_replace, should_handle_null_input)
 {
     char str[] = "ls :1";
-    infos_t *infos = malloc(sizeof(infos_t));
+    infos_t *infos = my_malloc(sizeof(infos_t));
     infos->input = str;
 
     strn_replace(infos, "-l");

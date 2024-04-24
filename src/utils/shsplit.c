@@ -125,6 +125,8 @@ char **shsplit(const char *str)
     shsplit->current_token_size = 0;
     shsplit->quote_char = '\0';
     shsplit->str = strdup(str);
+    for (int i = 0; is_space(shsplit->str[i]); i++)
+        shsplit->str++;
     shsplit2(shsplit);
     shsplit->token_index = 0;
     shsplit->current_token_size = 0;

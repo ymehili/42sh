@@ -92,7 +92,7 @@ static int search_alias_command(infos_t *infos, alias_t *new)
 
 void add_alias(infos_t *infos)
 {
-    alias_t *new = malloc(sizeof(alias_t));
+    alias_t *new = my_malloc(sizeof(alias_t));
 
     new->alias = my_strdup(infos->input_parse[1]);
     new->command = parse_alias_command(infos);

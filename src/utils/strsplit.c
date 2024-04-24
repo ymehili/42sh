@@ -10,7 +10,7 @@
 char **strsplit(const char *input, const char *delimiter)
 {
     int i = 0;
-    char **result = malloc(strlen(input) * sizeof(char *));
+    char **result = my_malloc(strlen(input) * sizeof(char *));
     char *string = strdup(input);
     char *start = string;
     char *end = strstr(start, delimiter);
