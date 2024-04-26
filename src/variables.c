@@ -58,18 +58,18 @@ int update_var(infos_t *infos, env_var_t *var)
     return 0;
 }
 
-static int set_new_var(infos_t *infos, int i, int read_only)
+static int set_new_var(infos_t *infos, int *i, int read_only)
 {
     env_var_t *var = NULL;
     int new_var = 1;
     int output = 0;
 
     var = my_malloc(sizeof(env_var_t));
-    var->name = parse_var(infos->input_parse[i], var, &new_var);
-    if (infos->input_parse[i + 1] != NULL && var->val == NULL &&
-        my_strcmp(infos->input_parse[i + 1], "=") == 0 && new_var == 0) {
-        var->val = my_strdup(infos->input_parse[i + 2]);
-        i += 2;
+    var->name = parse_var(infos->input_parse[*i], var, &new_var);
+    if (infos->input_parse[*i + 1] != NULL && var->val == NULL &&
+        my_strcmp(infos->input_parse[*i + 1], "=") == 0 && new_var == 0) {
+        var->val = my_strdup(infos->input_parse[*i + 2]);
+        *i += 2;
     }
     var->read_only = read_only;
     output = update_var(infos, var);
@@ -106,7 +106,7 @@ int set_func(infos_t *infos)
             infos->exit_code = 1;
             return 1;
         }
-        if (set_new_var(infos, i, read_only) == -1) {
+        if (set_new_var(infos, &i, read_only) == -1) {
             infos->exit_code = 1;
             return 1;
         }
