@@ -7,20 +7,11 @@
 
 #include "../../include/sh.h"
 
-int is_pipe_operator(char letter, char next_letter)
-{
-    if (letter == '|' && next_letter == '|') {
-        return 0;
-    }
-    return 1;
-}
-
 static int is_separator(char letter, char next_letter, char *separators)
 {
     for (int i = 0; separators[i] != '\0'; i++) {
-        if (letter == separators[i]) {
-            return is_pipe_operator(letter, next_letter);
-        }
+        if (letter == separators[i] && next_letter != separators[i])
+            return 1;
     }
     return 0;
 }
@@ -34,8 +25,7 @@ static int words_counter(char *str, char *separators)
     for (; str[i] != '\0'; i++) {
         if (in_word == 0 && is_separator(str[i], str[i + 1], separators) != 1)
             in_word = 1;
-        if (in_word == 1 && is_separator(str[i], str[i + 1], separators) &&
-            is_separator(str[i + 1], str[i + 2], separators)) {
+        if (in_word == 1 && is_separator(str[i], str[i + 1], separators)) {
             nb_words++;
             in_word = 0;
         }
@@ -61,8 +51,7 @@ static void save_words_in_ls(char **ls, char *str, char *separators)
     for (; str[i] != '\0'; i++) {
         if (in_word == 0 && is_separator(str[i], str[i + 1], separators) != 1)
             save_words_in_ls_2(&in_word, &start, i);
-        if (in_word == 1 && is_separator(str[i], str[i + 1], separators) &&
-            is_separator(str[i + 1], str[i + 2], separators)) {
+        if (in_word == 1 && is_separator(str[i], str[i + 1], separators)) {
             ls[nb] = my_malloc(sizeof(char) * (i - start + 1));
             my_strncpy(ls[nb], &str[start], i - start);
             nb++;
