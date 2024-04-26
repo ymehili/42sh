@@ -7,11 +7,6 @@
 
 #include "../../include/sh.h"
 
-static int is_space(char character)
-{
-    return character == ' ' || character == '\t' || character == '\n';
-}
-
 static int is_escape_char(shsplit_t *shsplit, int i)
 {
     if (shsplit->str[i] == '\\') {
@@ -117,6 +112,18 @@ void shsplit2(shsplit_t *shsplit)
     }
 }
 
+void removeleading(shsplit_t *shsplit)
+{
+    int space_count = 0;
+    char *new_str;
+
+    while (is_space(shsplit->str[space_count]))
+        space_count++;
+    new_str = strdup(shsplit->str + space_count);
+    free(shsplit->str);
+    shsplit->str = new_str;
+}
+
 char **shsplit(const char *str)
 {
     shsplit_t *shsplit = my_malloc(sizeof(shsplit_t));
@@ -125,8 +132,7 @@ char **shsplit(const char *str)
     shsplit->current_token_size = 0;
     shsplit->quote_char = '\0';
     shsplit->str = strdup(str);
-    for (int i = 0; is_space(shsplit->str[i]); i++)
-        shsplit->str++;
+    removeleading(shsplit);
     shsplit2(shsplit);
     shsplit->token_index = 0;
     shsplit->current_token_size = 0;
