@@ -96,7 +96,7 @@ load_test()
       then
         echo "Output $MYSHELL :"
         $CAT -e /tmp/.shell.$$
-        echo "" 
+        echo ""
         echo "Output $REFER :"
         $CAT -e /tmp/.refer.$$
         echo ""

@@ -7,7 +7,7 @@
 
 #include "../include/sh.h"
 
-static int is_red_2(infos_s *infos, char *str, int *i)
+static int is_red_2(infos_t *infos, char *str, int *i)
 {
     if (str[*i] == '>') {
         if (str[*i + 1] == '>') {
@@ -30,7 +30,7 @@ static int is_red_2(infos_s *infos, char *str, int *i)
     return 0;
 }
 
-int is_redirection(infos_s *infos, char *str)
+int is_redirection(infos_t *infos, char *str)
 {
     infos->input_type = 0;
     infos->output_type = 0;
@@ -42,7 +42,7 @@ int is_redirection(infos_s *infos, char *str)
     return 0;
 }
 
-char *save_redirection(infos_s *infos, char *input)
+char *save_redirection(infos_t *infos, char *input)
 {
     char *command = input;
 
@@ -63,7 +63,7 @@ char *save_redirection(infos_s *infos, char *input)
     return command;
 }
 
-void check_redirection(infos_s *infos)
+void check_redirection(infos_t *infos)
 {
     if (infos->input_type != 0 && infos->in_file_name == NULL) {
         return_error(NULL, "Missing name for redirect.\n", 1);
@@ -81,7 +81,7 @@ void check_redirection(infos_s *infos)
     }
 }
 
-void handle_redirection(infos_s *infos)
+void handle_redirection(infos_t *infos)
 {
     check_redirection(infos);
     if (infos->input_type != 0) {

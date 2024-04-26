@@ -9,14 +9,14 @@
 ##              VARIABLES               ##
 
 CC 					:= gcc
-CFLAGS 				:= -I./include/ -W -Wall -Wextra
+CFLAGS 				:= -I./include/ -W -Wall -Wextra -Wno-unused-parameter
 DFLAGS 				:= -g3
 EXECUTABLE 			:= 42sh
 TEST_EXECUTABLE 	:= unit_tests
 
 SRCDIR 				:= src
 OBJDIR 				:= obj
-TESTDIR 			:= tests
+TESTDIR 			:= tests/
 
 SOURCES_FILES 		:= $(shell find $(SRCDIR) -name '*.c')
 OBJECTS_FILES 		:= $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SOURCES_FILES))
@@ -46,9 +46,11 @@ clean:
 	@rm -f $(TEST_EXECUTABLE)
 	@rm -f *.gcno
 	@rm -f *.gcda
+	@rm -f vgcore.*
 
 fclean: clean
 	@rm -f $(EXECUTABLE)
+	@rm -f tester$(EXECUTABLE)
 
 tester: all
 	@cp $(EXECUTABLE) tester

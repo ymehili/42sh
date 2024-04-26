@@ -7,7 +7,7 @@
 
 #include "../include/sh.h"
 
-int cd_command(infos_s *infos, env_var_s *pwd, char *pwd_tmp)
+int cd_command(infos_t *infos, env_var_t *pwd, char *pwd_tmp)
 {
     char *param = infos->input_parse[1];
 
@@ -30,7 +30,7 @@ int cd_command(infos_s *infos, env_var_s *pwd, char *pwd_tmp)
     return 0;
 }
 
-static char *cd_wave(infos_s *infos)
+static char *cd_wave(infos_t *infos)
 {
     char *tmp = infos->input_parse[1];
 
@@ -41,7 +41,7 @@ static char *cd_wave(infos_s *infos)
     return tmp;
 }
 
-int static cd_2(infos_s *infos, char *tmp2, env_var_s *pwd)
+static int cd_2(infos_t *infos, char *tmp2, env_var_t *pwd)
 {
     char buff[PATH_MAX];
     char *tmp = cd_wave(infos);
@@ -55,10 +55,10 @@ int static cd_2(infos_s *infos, char *tmp2, env_var_s *pwd)
     return 0;
 }
 
-int cd_func(infos_s *infos)
+int cd_func(infos_t *infos)
 {
     char *tmp;
-    env_var_s *pwd = get_env_var_linked_ls(infos->env_linked_ls, "PWD");
+    env_var_t *pwd = get_env_var_linked_ls(infos->env_linked_ls, "PWD");
     char *pwd_tmp = infos->last_pwd;
 
     if (cd_params_checker(infos->input_parse, infos->last_pwd))
@@ -72,7 +72,7 @@ int cd_func(infos_s *infos)
     return 0;
 }
 
-static void new_env(infos_s *infos, env_var_s *new)
+static void new_env(infos_t *infos, env_var_t *new)
 {
     new->name = my_strdup(infos->input_parse[1]);
     new->val = get_nb_params(infos->input_parse) == 2 ?
@@ -84,31 +84,31 @@ static void new_env(infos_s *infos, env_var_s *new)
     infos->env_linked_ls = new;
 }
 
-int setenv_func(infos_s *infos)
+int setenv_func(infos_t *infos)
 {
-    env_var_s *elem = get_env_var_linked_ls(infos->env_linked_ls,
+    env_var_t *elem = get_env_var_linked_ls(infos->env_linked_ls,
         infos->input_parse[1]);
-    env_var_s *new;
+    env_var_t *new;
 
     if (setenv_error_checker(infos->input_parse))
         return 1;
     if (infos->input_parse[1] == NULL) {
-        display_env(infos->env_linked_ls);
+        display_env(infos->env_linked_ls, "=");
         return 0;
     }
     if (elem != NULL)
         elem->val = get_nb_params(infos->input_parse) == 2 ?
             my_strdup("") : my_strdup(infos->input_parse[2]);
     else {
-        new = (env_var_s *)my_malloc(sizeof(env_var_s));
+        new = (env_var_t *)my_malloc(sizeof(env_var_t));
         new_env(infos, new);
     }
     return 0;
 }
 
-int unsetenv_func(infos_s *infos)
+int unsetenv_func(infos_t *infos)
 {
-    env_var_s *elem;
+    env_var_t *elem;
 
     if (unsetenv_error_checker(infos->input_parse))
         return 1;
@@ -130,13 +130,13 @@ int unsetenv_func(infos_s *infos)
     return 0;
 }
 
-int env_func(infos_s *infos)
+int env_func(infos_t *infos)
 {
     if (get_nb_params(infos->input_parse) > 1) {
         my_putstr(infos->input_parse[0]);
         my_putstr(": Too many arguments.\n");
         return 1;
     }
-    display_env(infos->env_linked_ls);
+    display_env(infos->env_linked_ls, "=");
     return 0;
 }
