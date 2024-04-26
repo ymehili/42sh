@@ -9,11 +9,11 @@
 
 static split_t *create_split(char *str)
 {
-    split_t *split = malloc(sizeof(split_t));
+    split_t *split = my_malloc(sizeof(split_t));
 
-    split->result = malloc(sizeof(char *) * (strlen(str) + 1));
+    split->result = my_malloc(sizeof(char *) * (strlen(str) + 1));
     split->depth = 0;
-    split->current = malloc(sizeof(char) * (strlen(str) + 1));
+    split->current = my_malloc(sizeof(char) * (strlen(str) + 1));
     split->current_index = 0;
     split->result_index = 0;
     split->start = 0;

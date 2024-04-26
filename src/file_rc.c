@@ -17,7 +17,7 @@ char *open_file(char *file_name)
     if (fd == -1)
         return NULL;
     stat(file_name, &st);
-    buffer = malloc(sizeof(char) * (st.st_size + 1));
+    buffer = my_malloc(sizeof(char) * (st.st_size + 1));
     if (buffer == NULL)
         return NULL;
     size = read(fd, buffer, st.st_size);

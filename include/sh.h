@@ -160,6 +160,7 @@ void save_last_command_in_var(infos_t *infos, char *tmp);
 int change_variable(infos_t *infos);
 char **splitforpipe(char *str, char *separators);
 char **shsplit(const char *str);
+int is_space(char character);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
