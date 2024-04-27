@@ -19,12 +19,13 @@ static int launch_command(infos_t *infos)
 static int end_of_execve(infos_t *infos, pid_t child, int status)
 {
     close(infos->jobs->pipefd[1]);
-    if (infos->is_a_job == 1) {
+    if (infos->is_a_job == 1)
         redirect_into_output(infos);
-        start_a_job(infos);
-    } else
+    else
         waitpid(child, &status, 0);
     check_jobs_status(infos);
+    if (infos->is_a_job == 1)
+        start_a_job(infos);
     return status_code(status);
 }
 

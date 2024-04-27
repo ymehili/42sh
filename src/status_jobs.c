@@ -32,9 +32,8 @@ static void print_jobs_result(infos_t *infos, job_t *job)
 {
     my_putstr("[");
     my_putnbr(job->pos);
-    my_putstr("] ");
-    my_putnbr(job->pid);
-    my_putstr("\t\t[DONE] ");
+    my_putstr("]");
+    my_putstr("  + Done\t\t\t\t");
     my_putstr(job->command);
     my_putstr("\n");
 }
@@ -61,7 +60,7 @@ static void finish_jobs(infos_t *infos, job_t *job, int status)
         close(job->pipefd[0]);
         print_jobs_result(infos, job);
         delete_jobs(infos, job);
-    }
+    } 
 }
 
 void check_jobs_status(infos_t *infos)

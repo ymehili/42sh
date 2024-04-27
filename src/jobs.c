@@ -85,6 +85,8 @@ void realloc_command(infos_t *infos, char ***command, int i,
     (*command)[len_command + 1] = NULL;
     infos->is_a_job = 1;
     infos->jobs->command = my_strdup((*command)[i]);
+    if (infos->jobs->prev == NULL)
+        infos->jobs->pos = 1;
     return;
 }
 
@@ -94,7 +96,7 @@ void check_jobs(infos_t *infos, char ***command, int i)
 
     if (new_command[1] != NULL)
         return realloc_command(infos, command, i, new_command);
-    for (int t = 0; (*command)[i] && (*command)[i][t + 1] != '\0'; t++)
+    for (int t = 0; (*command)[i][t + 1] != '\0'; t++)
         if ((*command)[i][t] == '&') {
             infos->is_a_job = 1;
             infos->jobs->command = my_strdup((*command)[i]);
