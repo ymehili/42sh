@@ -71,24 +71,29 @@ char **split_once(char *str, char *separators)
     return result;
 }
 
-void check_jobs(infos_t *infos, char ***command, int i)
+void realloc_command(infos_t *infos, char ***command, int i,
+    char **new_command)
 {
-    char **new_command = split_once((*command)[i], "&");
     int len_command = 0;
 
     for (; (*command)[len_command]; len_command++);
-    if (new_command[1] != NULL) {
-        (*command) = realloc(*command, sizeof(char *) * (len_command + 2));
-        memmove((*command) + i + 2, (*command) + i + 1,
-            sizeof(char *) * (len_command - i));
-        (*command)[i] = new_command[0];
-        (*command)[i + 1] = new_command[1];
-        (*command)[len_command + 1] = NULL;
-        // start_a_job(infos, (*command)[i]);
-        infos->is_a_job = 1;
-        infos->jobs->command = my_strdup((*command)[i]);
-        return;
-    }
+    (*command) = realloc(*command, sizeof(char *) * (len_command + 2));
+    memmove((*command) + i + 2, (*command) + i + 1,
+        sizeof(char *) * (len_command - i));
+    (*command)[i] = new_command[0];
+    (*command)[i + 1] = new_command[1];
+    (*command)[len_command + 1] = NULL;
+    infos->is_a_job = 1;
+    infos->jobs->command = my_strdup((*command)[i]);
+    return;
+}
+
+void check_jobs(infos_t *infos, char ***command, int i)
+{
+    char **new_command = split_once((*command)[i], "&");
+
+    if (new_command[1] != NULL)
+        return realloc_command(infos, command, i, new_command);
     for (int t = 0; (*command)[i] && (*command)[i][t + 1] != '\0'; t++)
         if ((*command)[i][t] == '&') {
             infos->is_a_job = 1;

@@ -24,6 +24,8 @@
     #include <sys/select.h>
     #include <sys/time.h>
     #include <sys/types.h>
+    #include <signal.h>
+    #include <sys/wait.h>
 
 typedef struct env_var_s env_var_t;
 struct env_var_s {
@@ -50,6 +52,7 @@ struct job_s {
     int finish;
     char *command;
     char *output_job;
+    int pipefd[2];
     job_t *next;
     job_t *prev;
 };
@@ -152,8 +155,9 @@ int change_variable(infos_t *infos);
 void check_jobs(infos_t *infos, char ***command, int i);
 char **split_once(char *str, char *separators);
 void start_a_job(infos_t *infos);
-void make_redirection(infos_t *infos, int *pipefd, pid_t child);
-void redirect_into_output(infos_t *infos, int *pipefd);
+void make_redirection(infos_t *infos, pid_t child);
+void redirect_into_output(infos_t *infos);
+void check_jobs_status(infos_t *infos);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

@@ -7,14 +7,8 @@
 
 #include "../include/sh.h"
 
-static int launch_command(infos_t *infos, int *pipefd)
+static int launch_command(infos_t *infos)
 {
-    // if (infos->is_a_job == 1) {
-    //     my_putstr("[");
-    //     my_putnbr(infos->jobs->pos);
-    //     my_putstr("] ");
-    //     // redirect_into_output(infos, pipefd);
-    // }
     handle_redirection(infos);
     execve(infos->input_parse[0], infos->input_parse, infos->env);
     exec_with_path(infos);
@@ -22,41 +16,13 @@ static int launch_command(infos_t *infos, int *pipefd)
     exit(1);
 }
 
-void check_jobs_status(infos_t *infos)
+static int end_of_execve(infos_t *infos, pid_t child, int status)
 {
-    int status;
-    job_t *job = infos->first_jobs;
-    pid_t result;
-
-    while (job != NULL) {
-        if (job->command != NULL) {
-            result = waitpid(job->pid, &status, WNOHANG);
-            if (result > 0) {
-                if (WIFEXITED(status) || WIFSIGNALED(status)) {
-                    job->finish = 1;
-                    my_putstr("[");
-                    my_putnbr(job->pos);
-                    my_putstr("] ");
-                    my_putnbr(job->pid);
-                    my_putstr("\t\t[DONE] ");
-                    my_putstr(job->command);
-                    my_putstr("\n");
-                }
-            }
-        }
-        job = job->next;
-    }
-}
-
-
-static int end_of_execve(infos_t *infos, int *pipefd, pid_t child, int status)
-{
-    close(pipefd[1]);
+    close(infos->jobs->pipefd[1]);
     if (infos->is_a_job == 1) {
-        redirect_into_output(infos, pipefd);
+        redirect_into_output(infos);
         start_a_job(infos);
-    }
-    else
+    } else
         waitpid(child, &status, 0);
     check_jobs_status(infos);
     return status_code(status);
@@ -119,35 +85,39 @@ int status_code(int status)
     return WEXITSTATUS(status);
 }
 
+static void print_background_command(infos_t *infos, pid_t child)
+{
+    if (infos->is_a_job == 1) {
+        infos->jobs->pid = getpid();
+        my_putstr("[");
+        my_putnbr(infos->jobs->pos);
+        my_putstr("] ");
+        my_putnbr(infos->jobs->pid);
+        my_putstr("\n");
+        make_redirection(infos, child);
+    }
+}
+
 int execute_command(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN + 1])(infos_t *))
 {
     int status = 0;
     pid_t child;
-    int pipefd[2];
     int built_in_nb = is_built_in_command(infos, infos->input_parse[0]);
 
     if (built_in_nb != -1)
         return exec_built_in(infos, built_in_nb, built_in_commands);
-    pipe(pipefd);
+    pipe(infos->jobs->pipefd);
     child = fork();
     if (child < 0)
         return 84;
     else if (child == 0) {
-        close(pipefd[0]);
-        if (infos->is_a_job == 1) {
-            infos->jobs->pid = getpid();
-            my_putstr("[");
-            my_putnbr(infos->jobs->pos);
-            my_putstr("] ");
-            my_putnbr(infos->jobs->pid);
-            my_putstr("\n");
-            make_redirection(infos, pipefd, child);
-        }
-        launch_command(infos, pipefd);
+        close(infos->jobs->pipefd[0]);
+        print_background_command(infos, child);
+        launch_command(infos);
     }
     if (infos->is_a_job == 1) {
         infos->jobs->pid = child;
     }
-    return end_of_execve(infos, pipefd, child, status);
+    return end_of_execve(infos, child, status);
 }

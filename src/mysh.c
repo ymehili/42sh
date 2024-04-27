@@ -13,6 +13,21 @@ int return_error(char *name, char *str, int code)
     return code;
 }
 
+static void init_infos_2(infos_t *infos)
+{
+    infos->exit_code = 0;
+    infos->input_fd = STDIN_FILENO;
+    infos->run = 1;
+    infos->is_a_job = 0;
+    infos->jobs = my_malloc(sizeof(job_t));
+    infos->jobs->finish = 0;
+    infos->jobs->pid = 0;
+    infos->jobs->pos = 1;
+    infos->jobs->prev = NULL;
+    infos->jobs->next = NULL;
+    infos->first_jobs = infos->jobs;
+}
+
 infos_t *init_infos(char **env)
 {
     infos_t *infos = my_malloc(sizeof(infos_t));
@@ -30,16 +45,7 @@ infos_t *init_infos(char **env)
     infos->built_in_command_name[4] = my_strdup("env");
     infos->built_in_command_name[5] = my_strdup("history");
     infos->built_in_command_name[6] = my_strdup("set");
-    infos->exit_code = 0;
-    infos->input_fd = STDIN_FILENO;
-    infos->run = 1;
-    infos->is_a_job = 0;
-    infos->jobs = my_malloc(sizeof(job_t));
-    infos->jobs->finish = 0;
-    infos->jobs->pid = 0;
-    infos->jobs->prev = NULL;
-    infos->jobs->next = NULL;
-    infos->first_jobs = infos->jobs;
+    init_infos_2(infos);
     save_last_command_in_var(infos, NULL);
     return infos;
 }
