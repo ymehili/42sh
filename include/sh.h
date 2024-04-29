@@ -101,7 +101,7 @@ char *split_to_str(char **split, int at_end);
 char **strsplit(const char *str, const char *delim);
 void free_all(infos_t *infos);
 
-int mysh(int ac, char **av, char **env);
+int mysh(char **env);
 int return_error(char *name, char *str, int code);
 char *get_env_var(char **env, char *var_name);
 int cd_func(infos_t *infos);
