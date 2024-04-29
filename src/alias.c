@@ -128,17 +128,14 @@ static void search_alias(infos_t *infos)
 
 int alias_func(infos_t *infos)
 {
-    if (infos->input_parse[1] == NULL && infos->input_parse[2] == NULL) {
-            print_alias(infos);
+    if (infos->input_parse[1] != NULL && infos->input_parse[2] != NULL) {
+        add_alias(infos);
         return 0;
     }
     if (infos->input_parse[1] != NULL && infos->input_parse[2] == NULL) {
         search_alias(infos);
         return 0;
     }
-    if (infos->input_parse[1] != NULL && infos->input_parse[2] != NULL) {
-        add_alias(infos);
-        return 0;
-    }
+    print_alias(infos);
     return 0;
 }
