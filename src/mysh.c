@@ -99,7 +99,7 @@ int process_input(infos_t *infos,
     return 0;
 }
 
-int mysh(char **env)
+int mysh(int ac, char **av, char **env)
 {
     size_t buff_size = 32;
     infos_t *infos = init_infos(env);
