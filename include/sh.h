@@ -14,12 +14,14 @@
     #include <sys/wait.h>
     #include <sys/stat.h>
     #define NB_BUILT_IN 9
+    #define MAX_ALIAS 100
     #include <limits.h>
     #include <signal.h>
     #include "errno.h"
     #include <fcntl.h>
     #include <time.h>
     #include <string.h>
+    #include <stdbool.h>
 
 typedef struct env_var_s env_var_t;
 struct env_var_s {
@@ -37,6 +39,12 @@ struct history_s {
     char *command;
     history_t *next;
     history_t *prev;
+};
+
+typedef struct alias_set_s alias_set_t;
+struct alias_set_s {
+    char *alias[MAX_ALIAS];
+    int count;
 };
 
 typedef struct alias_s alias_t;
@@ -70,6 +78,7 @@ struct infos_s {
     int output_type;
     history_t *history;
     alias_t *alias;
+    alias_set_t *alias_set;
 };
 
 typedef struct split_s {

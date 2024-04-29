@@ -34,6 +34,7 @@ infos_t *init_infos(char **env)
     infos_t *infos = my_malloc(sizeof(infos_t));
 
     infos->input = my_malloc(sizeof(char) * 32);
+    infos->alias_set = my_malloc(sizeof(alias_set_t));
     infos->env = env;
     infos->history = NULL;
     infos->env_linked_ls = env_to_linked_ls(env);
@@ -90,7 +91,8 @@ int process_input(infos_t *infos,
     }
     if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
         infos->history = add_to_history(infos, my_strdup(infos->input));
-    find_alias(infos, infos->input);
+    if (my_strncmp(infos->input, "alias", 5) != 0)
+        find_alias(infos, infos->input);
     tmp = my_strdup(infos->input);
     if (change_variable(infos))
         return 1;
