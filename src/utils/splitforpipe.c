@@ -7,10 +7,10 @@
 
 #include "../../include/sh.h"
 
-static int is_separator(char letter, char *separators)
+static int is_separator(char letter, char next_letter, char *separators)
 {
     for (int i = 0; separators[i] != '\0'; i++) {
-        if (letter == separators[i])
+        if (letter == separators[i] && next_letter != separators[i])
             return 1;
     }
     return 0;
@@ -23,9 +23,9 @@ static int words_counter(char *str, char *separators)
     int i = 0;
 
     for (; str[i] != '\0'; i++) {
-        if (in_word == 0 && is_separator(str[i], separators) != 1)
+        if (in_word == 0 && is_separator(str[i], str[i + 1], separators) != 1)
             in_word = 1;
-        if (in_word == 1 && is_separator(str[i], separators)) {
+        if (in_word == 1 && is_separator(str[i], str[i + 1], separators)) {
             nb_words++;
             in_word = 0;
         }
@@ -49,9 +49,9 @@ static void save_words_in_ls(char **ls, char *str, char *separators)
     int i = 0;
 
     for (; str[i] != '\0'; i++) {
-        if (in_word == 0 && is_separator(str[i], separators) != 1)
+        if (in_word == 0 && is_separator(str[i], str[i + 1], separators) != 1)
             save_words_in_ls_2(&in_word, &start, i);
-        if (in_word == 1 && is_separator(str[i], separators)) {
+        if (in_word == 1 && is_separator(str[i], str[i + 1], separators)) {
             ls[nb] = my_malloc(sizeof(char) * (i - start + 1));
             my_strncpy(ls[nb], &str[start], i - start);
             nb++;
@@ -64,7 +64,7 @@ static void save_words_in_ls(char **ls, char *str, char *separators)
     }
 }
 
-char **split(char *str, char *separators)
+char **splitforpipe(char *str, char *separators)
 {
     int nb_word = words_counter(str, separators);
     char **words_ls = my_malloc(sizeof(char *) * (nb_word + 1));

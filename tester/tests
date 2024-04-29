@@ -314,7 +314,6 @@ TESTS=
 echo 'set test=2'
 echo 'echo $test'
 [936-END]
-
 [937]
 NAME="test var substitution with command"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
@@ -328,3 +327,38 @@ SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS="printf 'ls\necho $?\n' | $MYSHELL"
 [938-END]
+
+[939]
+NAME="create alias"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\n' | $MYSHELL"
+[939-END]
+
+[940]
+NAME="create alias error"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\nalias test6=ls -l -a -t -r -y\n' | $MYSHELL"
+[940-END]
+
+[941]
+NAME="print alias"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\nalias test6=ls -l -a -t -r -y\nalias\n' | $MYSHELL"
+[941-END]
+
+[942]
+NAME="search alias"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\nalias test6=ls -l -a -t -r -y\nalias test\n' | $MYSHELL"
+[942-END]
+
+[943]
+NAME="unset alias"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\nalias test6=ls -l -a -t -r -y\nunalias test\nalias\n' | $MYSHELL"
+[943-END]

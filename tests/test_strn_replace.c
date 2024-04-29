@@ -8,10 +8,10 @@
 #include "../include/sh.h"
 #include <criterion/criterion.h>
 
-Test(strn_replace, basic_test)
+Test(remove_line_return, should_remove_line_return)
 {
     char str[] = "ls !:1";
-    infos_t *infos = malloc(sizeof(infos_t));
+    infos_t *infos = my_malloc(sizeof(infos_t));
     infos->input = str;
 
     strn_replace(infos, "-l");
@@ -19,10 +19,10 @@ Test(strn_replace, basic_test)
     free(infos);
 }
 
-Test(strn_replace, should_handle_null_input)
+Test(strn_replace, should_replace_substring)
 {
     char str[] = "ls :1";
-    infos_t *infos = malloc(sizeof(infos_t));
+    infos_t *infos = my_malloc(sizeof(infos_t));
     infos->input = str;
 
     strn_replace(infos, "-l");

@@ -60,6 +60,7 @@ env_var_t *env_to_linked_ls(char **env)
             head->prev = new;
         new->next = head;
         head = new;
+        free(env_var);
     }
     return head;
 }

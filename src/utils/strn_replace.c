@@ -39,9 +39,9 @@ int strn_replace_bis(infos_t *infos, char **bang, size_t len_bang_to_space,
     return 0;
 }
 
-void strn_replace(infos_t *infos, char *replace)
+void strn_replace(infos_t *infos, char *replace, char *to_replace)
 {
-    char *bang = strstr(infos->input, "!");
+    char *bang = strstr(infos->input, to_replace);
     char *space;
     size_t len_bang_to_space;
     size_t len_token;

@@ -1,16 +1,55 @@
+# Prerequisites
+*.d
+
+# Object files
 *.o
-obj
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
 *.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
 *.so
-a.out
-*~
-\#*\#
-vgcore.*
-*.gcno
-*.gcda
-unit_tests
-.vscode/*
-.vscode
-coding-style-reports.log
-coding-style-report.log
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
 42sh
+.vscode/*
+coding-style-reports.log

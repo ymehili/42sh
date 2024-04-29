@@ -7,24 +7,24 @@
 
 #include "../include/sh.h"
 
-int cd_command(infos_t *infos, env_var_t *pwd, char *pwd_tmp)
+int cd_command(infos_t *infos, char *param, env_var_t *pwd, env_var_t *old_pwd)
 {
-    char *param = infos->input_parse[1];
-
     if (get_nb_params(infos->input_parse) == 1 ||
         !my_strncmp(param, "--", 3)) {
         chdir(get_env_var_linked_ls(infos->env_linked_ls, "HOME")->val);
+        old_pwd->val = pwd->val;
         pwd->val = get_env_var_linked_ls(infos->env_linked_ls, "HOME")->val;
         return 1;
     }
     if (!my_strncmp(param, "/", my_strlen(param))) {
         chdir("/");
+        old_pwd->val = pwd->val;
         pwd->val = my_strdup("/");
         return 1;
     }
     if (!my_strncmp(param, "-", my_strlen(param))) {
-        chdir(pwd_tmp);
-        pwd->val = pwd_tmp;
+        chdir(old_pwd->val);
+        pwd->val = old_pwd->val;
         return 1;
     }
     return 0;
@@ -41,15 +41,17 @@ static char *cd_wave(infos_t *infos)
     return tmp;
 }
 
-static int cd_2(infos_t *infos, char *tmp2, env_var_t *pwd)
+static int cd_2(infos_t *infos)
 {
     char buff[PATH_MAX];
     char *tmp = cd_wave(infos);
+    env_var_t *pwd = get_env_var_linked_ls(infos->env_linked_ls, "PWD");
+    env_var_t *old_pwd = get_env_var_linked_ls(infos->env_linked_ls, "OLDPWD");
 
-    if (chdir(infos->input_parse[1]) == 0)
+    if (chdir(infos->input_parse[1]) == 0) {
+        old_pwd->val = pwd->val;
         pwd->val = getcwd(buff, PATH_MAX);
-    else {
-        infos->last_pwd = tmp2;
+    } else {
         return cd_error(tmp);
     }
     return 0;
@@ -57,17 +59,15 @@ static int cd_2(infos_t *infos, char *tmp2, env_var_t *pwd)
 
 int cd_func(infos_t *infos)
 {
-    char *tmp;
+    char *param = infos->input_parse[1];
     env_var_t *pwd = get_env_var_linked_ls(infos->env_linked_ls, "PWD");
-    char *pwd_tmp = infos->last_pwd;
+    env_var_t *old_pwd = get_env_var_linked_ls(infos->env_linked_ls, "OLDPWD");
 
-    if (cd_params_checker(infos->input_parse, infos->last_pwd))
+    if (cd_params_checker(infos->input_parse, old_pwd->val))
         return 1;
-    tmp = infos->last_pwd;
-    infos->last_pwd = pwd->val;
-    if (cd_command(infos, pwd, pwd_tmp))
+    if (cd_command(infos, param, pwd, old_pwd))
         return 0;
-    if (cd_2(infos, tmp, pwd))
+    if (cd_2(infos))
         return 1;
     return 0;
 }

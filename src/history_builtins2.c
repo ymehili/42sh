@@ -34,7 +34,7 @@ int all_history_args(infos_t *infos, char *command)
         return 84;
     }
     g_tok = all_history_args_bis(token, g_tok);
-    strn_replace(infos, g_tok);
+    strn_replace(infos, g_tok, "!");
     free(g_tok);
     return -1;
 }
@@ -55,7 +55,7 @@ int last_history_args(infos_t *infos, char *command)
         token = strtok(NULL, " ");
     }
     if (last_token != NULL) {
-        strn_replace(infos, last_token);
+        strn_replace(infos, last_token, "!");
         return -1;
     }
     my_putstr("Bad ! arguments selector.\n");
@@ -81,7 +81,7 @@ static int handle_token(history_args_t *history_args)
         if (history_args->end_id == -1 || history_args->current_id ==
             history_args->end_id) {
             history_args->args[my_strlen(history_args->args)] = '\0';
-            strn_replace(history_args->infos, history_args->args);
+            strn_replace(history_args->infos, history_args->args, "!");
             return -1;
         }
     }
@@ -124,7 +124,7 @@ int first_history_args(infos_t *infos, char *command)
     }
     token = strtok(NULL, " ");
     if (token != NULL) {
-        strn_replace(infos, token);
+        strn_replace(infos, token, "!");
         return -1;
     }
     my_putstr("Bad ! arguments selector.\n");
