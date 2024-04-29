@@ -97,6 +97,7 @@ int my_char_isalpha(char str);
 char *my_strdup(char *src);
 char **split_first(char *str, char *separators);
 int get_nb_params(char **params);
+char **split_by_bracket(char *str);
 char *split_to_str(char **split, int at_end);
 char **strsplit(const char *str, const char *delim);
 void free_all(infos_t *infos);
