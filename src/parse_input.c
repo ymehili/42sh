@@ -41,7 +41,6 @@ static int handle_and_or_pipe_commands(infos_t *infos,
     int ret = 0;
 
     if (and_commands[1] != NULL){
-        printf("here\n");
         handle_and(infos, built_in_commands, and_commands);
         ret = 1;
     }

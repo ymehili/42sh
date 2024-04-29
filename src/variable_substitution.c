@@ -7,23 +7,58 @@
 
 #include "../include/sh.h"
 
+static int search_var(infos_t *infos, int *i, int j)
+{
+    if (infos->input[j] != '{') {
+        for (; infos->input[j] != '\0' && infos->input[j] != ' ' &&
+        infos->input[j] != '\t' && infos->input[j] != '\n' &&
+        infos->input[j] != '$'; j += 1);
+        return j;
+    }
+    for (j += 1; (is_alpha(infos->input[j]) || is_num(infos->input[j]) ||
+        infos->input[j] == '_') && infos->input[j] != '}'; j += 1);
+    if (infos->input[j] != '}') {
+        printf("Missing '}'.\n");
+        return *i;
+    }
+    *i += 1;
+    return j;
+}
+
+static int var_error(infos_t *infos, int *i, int *j, env_var_t *var)
+{
+    if (*j == *i) {
+        infos->exit_code = 1;
+        return 1;
+    }
+    if (var == NULL) {
+        infos->exit_code = 1;
+        return 2;
+    }
+    if (infos->input[*j] == '}') {
+        *i -= 1;
+        *j += 1;
+    }
+    return 0;
+}
+
 int change_variable_bis(infos_t *infos, int i)
 {
     int j = i + 1;
     char *var_name = NULL;
     env_var_t *var = NULL;
+    int output;
 
-    for (; infos->input[j] != '\0' && infos->input[j] != ' ' &&
-        infos->input[j] != '\t' && infos->input[j] != '\n' &&
-        infos->input[j] != '$'; j++);
+    j = search_var(infos, &i, j);
     if (i == j - 1)
         return j;
     var_name = my_malloc(sizeof(char) * (j - i));
     var_name = my_strncpy(var_name, &infos->input[i + 1], j - i - 1);
     var = get_var(infos, var_name);
-    if (var == NULL) {
-        printf("%s: Undefined variable.\n", var_name);
-        infos->exit_code = 1;
+    output = var_error(infos, &i, &j, var);
+    if (output) {
+        if (output == 2)
+            printf("%s: Undefined variable.\n", var_name);
         return -1;
     }
     infos->input = str_insert_and_replace(infos->input,
