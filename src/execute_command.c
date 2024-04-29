@@ -40,6 +40,8 @@ int exec_with_path(infos_t *infos)
         return 0;
     path_val_ls = split(path_val, ":");
     for (int i = 0; path_val_ls[i] != NULL; i++) {
+        if (my_strcmp(path_val_ls[i], "/") == 0)
+            continue;
         execve(my_strcat(my_strcat(path_val_ls[i], "/"),
             infos->input_parse[0]), infos->input_parse, infos->env);
     }
