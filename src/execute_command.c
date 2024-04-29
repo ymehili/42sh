@@ -12,7 +12,8 @@ static int launch_command(infos_t *infos)
     handle_redirection(infos);
     execve(infos->input_parse[0], infos->input_parse, infos->env);
     exec_with_path(infos);
-    return_error(infos->input_parse[0], ": Command not found.\n", 1);
+    if (infos->is_a_job != 1)
+        return_error(infos->input_parse[0], ": Command not found.\n", 1);
     exit(1);
 }
 
@@ -23,7 +24,7 @@ static int end_of_execve(infos_t *infos, pid_t child, int status)
         redirect_into_output(infos);
     else
         waitpid(child, &status, 0);
-    check_jobs_status(infos);
+    check_jobs_end(infos);
     if (infos->is_a_job == 1)
         start_a_job(infos);
     return status_code(status);

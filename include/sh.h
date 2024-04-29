@@ -13,7 +13,7 @@
     #include <sys/types.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
-    #define NB_BUILT_IN 7
+    #define NB_BUILT_IN 8
     #include <limits.h>
     #include <signal.h>
     #include "errno.h"
@@ -26,6 +26,7 @@
     #include <sys/types.h>
     #include <signal.h>
     #include <sys/wait.h>
+    #include <pthread.h>
 
 typedef struct env_var_s env_var_t;
 struct env_var_s {
@@ -80,6 +81,7 @@ struct infos_s {
     int is_a_job;
     job_t *jobs;
     job_t *first_jobs;
+    pthread_mutex_t mutex;
 };
 
 void *my_memset(void *ptr, char c, int size);
@@ -128,6 +130,7 @@ int is_redirection(infos_t *infos, char *str);
 void handle_redirection(infos_t *infos);
 int is_num(char str);
 int is_alpha(char str);
+int is_not_num(char str);
 
 history_t *add_to_history(infos_t *infos, char *command);
 int history_func(infos_t *infos);
@@ -157,7 +160,12 @@ char **split_once(char *str, char *separators);
 void start_a_job(infos_t *infos);
 void make_redirection(infos_t *infos, pid_t child);
 void redirect_into_output(infos_t *infos);
-void check_jobs_status(infos_t *infos);
+
+void *check_jobs_status(void *arg);
+void check_jobs_end(infos_t *infos);
+
+void display_output_job(infos_t *infos, job_t *job);
+int fg_func(infos_t *infos);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

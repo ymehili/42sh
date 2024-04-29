@@ -7,7 +7,7 @@
 
 #include "../include/sh.h"
 
-static void jobs_finish(infos_t *infos, job_t *job)
+void display_output_job(infos_t *infos, job_t *job)
 {
     char *buffer = my_malloc(sizeof(char) * 4096);
     ssize_t nbytes;
@@ -28,12 +28,19 @@ static void jobs_finish(infos_t *infos, job_t *job)
         my_putstr(job->output_job);
 }
 
-static void print_jobs_result(infos_t *infos, job_t *job)
+static void print_jobs_result(infos_t *infos, job_t *job, int status)
 {
+    int exit_status = WEXITSTATUS(status);
+
     my_putstr("[");
     my_putnbr(job->pos);
     my_putstr("]");
-    my_putstr("  + Done\t\t\t\t");
+    if (exit_status == 0)
+        my_putstr("  + Done\t\t\t\t");
+    else {
+        my_putstr("  + Exit 1\t\t\t\t");
+        infos->jobs->pos = infos->jobs->pos - 1; 
+    }
     my_putstr(job->command);
     my_putstr("\n");
 }
@@ -56,21 +63,44 @@ static void delete_jobs(infos_t *infos, job_t *job)
 static void finish_jobs(infos_t *infos, job_t *job, int status)
 {
     if (WIFEXITED(status) || WIFSIGNALED(status)) {
-        jobs_finish(infos, job);
+        display_output_job(infos, job);
         close(job->pipefd[0]);
-        print_jobs_result(infos, job);
+        print_jobs_result(infos, job, status);
         delete_jobs(infos, job);
     } 
 }
 
-void check_jobs_status(infos_t *infos)
+void check_jobs_end(infos_t *infos)
 {
     int status;
     job_t *job = infos->first_jobs;
 
     while (job != NULL) {
-        if (waitpid(job->pid, &status, WNOHANG) > 0)
-            finish_jobs(infos, job, status);
+            // printf("\nDANS LE CODE je check le (%s)", job->command);
+            if (waitpid(job->pid, &status, WNOHANG) > 0)
+                finish_jobs(infos, job, status);
         job = job->next;
     }
+}
+
+void *check_jobs_status(void *arg)
+{
+    infos_t *infos = (infos_t *)arg;
+    int status;
+    job_t *job;
+
+    while (1) {
+        job = infos->first_jobs;
+        while (job != NULL) {
+            // printf("\nDANS LE THREAD je check le (%s)", job->command);
+            if (waitpid(job->pid, &status, WNOHANG) > 0) {
+                printf("job fini\n");
+                finish_jobs(infos, job, status);
+            }
+            job = job->next;
+        }
+        sleep(1);
+    }
+    free(job);
+    return NULL;
 }

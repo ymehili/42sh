@@ -26,6 +26,7 @@ static void init_infos_2(infos_t *infos)
     infos->jobs->prev = NULL;
     infos->jobs->next = NULL;
     infos->first_jobs = infos->jobs;
+    pthread_mutex_init(&(infos->mutex), NULL);
 }
 
 infos_t *init_infos(char **env)
@@ -45,6 +46,7 @@ infos_t *init_infos(char **env)
     infos->built_in_command_name[4] = my_strdup("env");
     infos->built_in_command_name[5] = my_strdup("history");
     infos->built_in_command_name[6] = my_strdup("set");
+    infos->built_in_command_name[7] = my_strdup("fg");
     init_infos_2(infos);
     save_last_command_in_var(infos, NULL);
     return infos;
@@ -145,18 +147,24 @@ int mysh(int ac, char **av, char **env)
     infos_t *infos = init_infos(env);
     int (*built_in_commands[NB_BUILT_IN])(infos_t *) = {
         &cd_func, &setenv_func, &unsetenv_func, NULL, &env_func, &history_func,
-        &set_func
+        &set_func, &fg_func
     };
+    pthread_t coeur;
 
+    pthread_create(&coeur, NULL, check_jobs_status, &infos);
+    pthread_detach(coeur);
     while (infos->run == 1) {
+        pthread_mutex_lock(&infos->mutex);
         get_cwd(infos);
         if (isatty(0) != 0)
             my_putstr(infos->line_cwd);
         if (getline(&(infos->input), &buff_size, stdin) == -1)
             break;
         process_input(infos, built_in_commands);
+        pthread_mutex_unlock(&infos->mutex); 
     }
     if (infos->run == 1 && isatty(0) != 0)
         my_putstr("exit\n");
+    pthread_mutex_destroy(&infos->mutex);
     return infos->exit_code;
 }
