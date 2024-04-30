@@ -48,6 +48,17 @@ struct alias_s {
     alias_t *prev;
 };
 
+typedef struct job_s job_t;
+
+struct job_s {
+    pid_t pid;
+    int pos;
+    int finished;
+    char *command;
+    job_t *prev;
+    job_t *next;
+};
+
 typedef struct infos_s infos_t;
 struct infos_s {
     char **env;
@@ -70,6 +81,10 @@ struct infos_s {
     int output_type;
     history_t *history;
     alias_t *alias;
+    job_t *jobs;
+    job_t *first_job;
+    job_t *last_job;
+    int is_a_job;
 };
 
 typedef struct split_s {
@@ -80,6 +95,8 @@ typedef struct split_s {
     int result_index;
     int start;
 } split_t;
+
+
 
 void *my_memset(void *ptr, char c, int size);
 void *my_malloc(int size);
@@ -103,7 +120,7 @@ char **strsplit(const char *str, const char *delim);
 void free_all(infos_t *infos);
 
 int mysh(int ac, char **av, char **env);
-int return_error(char *name, char *str, int code);
+int return_error(infos_t *infos, char *name, char *str, int code);
 char *get_env_var(char **env, char *var_name);
 int cd_func(infos_t *infos);
 int setenv_func(infos_t *infos);
@@ -162,6 +179,12 @@ int change_variable(infos_t *infos);
 char **splitforpipe(char *str, char *separators);
 char **shsplit(const char *str);
 int is_space(char character);
+
+void check_jobs(infos_t *infos, char ***command, int i);
+void realloc_command(infos_t *infos, char ***command, int i,
+    char **new_command);
+void start_a_job(infos_t *infos);
+void check_jobs_end(infos_t *infos);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

@@ -66,6 +66,21 @@ int status_code(int status)
     return WEXITSTATUS(status);
 }
 
+static int execute_job(infos_t *infos, pid_t child, int status)
+{
+    if (infos->is_a_job == 1) {
+        infos->jobs->pid = child;
+        my_putstr("[");
+        my_putnbr(infos->jobs->pos);
+        my_putstr("] ");
+        my_putnbr(infos->jobs->pid);
+        my_putstr("\n");
+        infos->is_a_job = 0;
+    } else
+        waitpid(child, &status, 0);
+    return status_code(status);
+}
+
 int execute_command(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN + 1])(infos_t *))
 {
@@ -82,9 +97,9 @@ int execute_command(infos_t *infos,
         handle_redirection(infos);
         execve(infos->input_parse[0], infos->input_parse, infos->env);
         exec_with_path(infos);
-        return_error(infos->input_parse[0], ": Command not found.\n", 1);
+        return_error(infos, infos->input_parse[0],
+                    ": Command not found.\n", 1);
         exit(1);
     }
-    waitpid(child, &status, 0);
-    return status_code(status);
+    return execute_job(infos, child, status);
 }

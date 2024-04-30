@@ -6,11 +6,14 @@
 */
 #include "../include/sh.h"
 
-int return_error(char *name, char *str, int code)
+int return_error(infos_t *infos, char *name, char *str, int code)
 {
-    write(2, name, my_strlen(name));
-    write(2, str, my_strlen(str));
-    return code;
+    if (infos->is_a_job != 1) {
+        write(2, name, my_strlen(name));
+        write(2, str, my_strlen(str));
+        return code;
+    }
+    return 0;
 }
 
 static void init_builtins(infos_t *infos)
@@ -41,6 +44,7 @@ infos_t *init_infos(char **env)
     infos->exit_code = 0;
     infos->input_fd = STDIN_FILENO;
     infos->run = 1;
+    infos->is_a_job = 0;
     save_last_command_in_var(infos, NULL);
     return infos;
 }
