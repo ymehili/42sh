@@ -53,3 +53,7 @@ dkms.conf
 42sh
 .vscode/*
 coding-style-reports.log
+vgcore.*
+*.gcda
+*.gcno
+unit_tests
