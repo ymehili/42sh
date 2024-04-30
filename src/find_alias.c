@@ -65,7 +65,7 @@ bool process_token(alias_t *tmp, infos_t *infos, char **command_copy,
 int find_alias(infos_t *infos, char *command)
 {
     char *command_copy = strdup(command);
-    char *token;
+    char *token = my_malloc(sizeof(char) * 100);
     bool alias_found;
     alias_t *tmp = infos->alias;
 
@@ -74,10 +74,7 @@ int find_alias(infos_t *infos, char *command)
     do {
         token = strtok(command_copy, " ");
         alias_found = process_token(tmp, infos, &command_copy, token);
-        if (alias_found == false)
-            break;
-        token = strtok(NULL, " ");
-        if (token == NULL)
+        if (alias_found == false || token == NULL)
             break;
     } while (1);
     free(command_copy);
