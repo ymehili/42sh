@@ -84,17 +84,17 @@ static int status_variable(infos_t *infos, int i)
 
 static int pid_variable(infos_t *infos, int i)
 {
-    char *pid = my_malloc(sizeof(char) * 5);
+    char *pid;
 
-    sprintf(pid, "%d", getpid());
     if (infos->input[i + 1] == '$') {
+        pid = my_malloc(sizeof(char) * 5);
+        sprintf(pid, "%d", getpid());
         infos->input = str_insert_and_replace(infos->input,
             pid, i, i + 2);
         i += my_strlen(pid) - 1;
         free(pid);
         return i;
     }
-    free(pid);
     return i;
 }
 

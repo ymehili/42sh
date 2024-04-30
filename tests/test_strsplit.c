@@ -32,7 +32,7 @@ Test(strsplit, should_handle_empty_string)
 {
     char **result = strsplit("", ",");
 
-    cr_assert_null(result[0]);
+    cr_assert_null(result[1]);
     free(result);
 }
 

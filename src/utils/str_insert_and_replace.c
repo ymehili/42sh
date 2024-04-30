@@ -10,12 +10,12 @@
 char *str_insert_and_replace(char *str, char *insert, int start, int end)
 {
     char *new_str = my_malloc(sizeof(char) *
-        (my_strlen(str) + my_strlen(insert) + 1));
+        (my_strlen(str) + my_strlen(insert) + 2));
     int i = 0;
     int j = 0;
 
     if (str == NULL || insert == NULL)
-        return NULL;
+        return strcat(my_strncpy(new_str, str, start), &str[end]);
     for (; i < start; i++)
         new_str[i] = str[i];
     for (; insert[j] != '\0'; j++) {
