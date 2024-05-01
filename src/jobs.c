@@ -7,30 +7,6 @@
 
 #include "../include/sh.h"
 
-// void start_a_job(infos_t *infos)
-// {
-//     job_t *new_job = my_malloc(sizeof(job_t));
-//     job_t *current_job = my_malloc(sizeof(job_t));
-
-//     new_job->finished = 0;
-//     new_job->command = NULL;
-//     new_job->next = NULL;
-//     if (infos->jobs == NULL) {
-//         new_job->prev = NULL;
-//         new_job->pos = 1;
-//         infos->jobs = new_job;
-//         infos->first_job = new_job;
-//     } else {
-//         current_job = infos->jobs;
-//         while (current_job->next != NULL)
-//             current_job = current_job->next;
-//         current_job->next = new_job;
-//         new_job->prev = current_job;
-//         new_job->pos = current_job->pos + 1;
-//         infos->jobs = new_job;
-//     }
-// }
-
 void start_a_job(infos_t *infos)
 {
     job_t *new_job = my_malloc(sizeof(job_t));
@@ -119,6 +95,7 @@ void check_jobs(infos_t *infos, char ***command, int i)
             start_a_job(infos);
             infos->is_a_job = 1;
             infos->jobs->command = my_strdup((*command)[i]);
+            printf("ma nouvelle case est : (%s)\n", (*command)[i]);
         }
     free((*command)[i]);
     (*command)[i] = new_command[0];

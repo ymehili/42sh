@@ -24,7 +24,7 @@ static void print_jobs_result(infos_t *infos, job_t *job, int status)
     my_putstr("\n");
 }
 
-static void delete_jobs(infos_t *infos, job_t *job)
+void delete_jobs(infos_t *infos, job_t *job)
 {
     if (job->prev == NULL) {
         infos->first_job = job->next;
@@ -35,11 +35,14 @@ static void delete_jobs(infos_t *infos, job_t *job)
         job->prev->next = job->next;
         if (job->next != NULL) {
             job->next->prev = job->prev;
+            return;
         }
+    job->prev->next = NULL;
+    job = job->prev;
     }
 }
 
-static void finish_jobs(infos_t *infos, job_t *job, int status)
+void finish_jobs(infos_t *infos, job_t *job, int status)
 {
     if (WIFEXITED(status) || WIFSIGNALED(status)) {
         print_jobs_result(infos, job, status);

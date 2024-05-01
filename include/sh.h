@@ -13,7 +13,7 @@
     #include <sys/types.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
-    #define NB_BUILT_IN 9
+    #define NB_BUILT_IN 10
     #include <limits.h>
     #include <signal.h>
     #include "errno.h"
@@ -130,9 +130,9 @@ env_var_t *get_env_var_linked_ls(env_var_t *env, char *var_name);
 void display_env(env_var_t *env_ls, char *sep);
 int env_func(infos_t *infos);
 int unsetenv_error_checker(char **params);
-int setenv_error_checker(char **params);
-int cd_error(char *str);
-int cd_params_checker(char **params, char *last_pwd);
+int setenv_error_checker(infos_t *infos, char **params);
+int cd_error(infos_t *infos, char *str);
+int cd_params_checker(infos_t *infos, char **params, char *last_pwd);
 int exec_built_in(infos_t *infos, int built_in_nb,
     int (*built_in_commands[NB_BUILT_IN + 1])(infos_t *));
 int execute_command(infos_t *infos,
@@ -146,6 +146,7 @@ char *save_redirection(infos_t *infos, char *input);
 int is_redirection(infos_t *infos, char *str);
 void handle_redirection(infos_t *infos);
 int is_num(char str);
+int is_not_num(char str);
 int is_alpha(char str);
 
 history_t *add_to_history(infos_t *infos, char *command);
@@ -183,8 +184,12 @@ int is_space(char character);
 void check_jobs(infos_t *infos, char ***command, int i);
 void realloc_command(infos_t *infos, char ***command, int i,
     char **new_command);
+
 void start_a_job(infos_t *infos);
+void delete_jobs(infos_t *infos, job_t *job);
 void check_jobs_end(infos_t *infos);
+void finish_jobs(infos_t *infos, job_t *job, int status);
+int fg_func(infos_t *infos);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
