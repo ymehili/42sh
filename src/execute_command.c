@@ -66,6 +66,16 @@ int status_code(int status)
     return WEXITSTATUS(status);
 }
 
+static void check_suspend_command(infos_t *infos, pid_t child, int status)
+{
+    if (WSTOPSIG(status) == SIGTSTP) {
+        write(1, "\nSuspended\n", 11);
+        start_a_job(infos);
+        infos->jobs->pid = child;
+        infos->jobs->command = split_to_str(infos->input_parse, 1);
+    }
+}
+
 static int execute_job(infos_t *infos, pid_t child, int status)
 {
     if (infos->is_a_job == 1) {
@@ -76,8 +86,10 @@ static int execute_job(infos_t *infos, pid_t child, int status)
         my_putnbr(infos->jobs->pid);
         my_putstr("\n");
         infos->is_a_job = 0;
-    } else
-        waitpid(child, &status, 0);
+    } else {
+        waitpid(child, &status, WUNTRACED);
+        check_suspend_command(infos, child, status);
+    }
     return status_code(status);
 }
 
@@ -90,10 +102,12 @@ int execute_command(infos_t *infos,
 
     if (built_in_nb != -1)
         return exec_built_in(infos, built_in_nb, built_in_commands);
+    signal(SIGTSTP, SIG_IGN);
     child = fork();
     if (child < 0)
         return 84;
     else if (child == 0) {
+        signal(SIGTSTP, SIG_DFL);
         handle_redirection(infos);
         execve(infos->input_parse[0], infos->input_parse, infos->env);
         exec_with_path(infos);

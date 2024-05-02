@@ -56,8 +56,8 @@ void check_jobs_end(infos_t *infos)
     job_t *job = infos->first_job;
 
     while (job != NULL) {
-            if (waitpid(job->pid, &status, WNOHANG) > 0)
-                finish_jobs(infos, job, status);
+        if (waitpid(job->pid, &status, WNOHANG) > 0)
+            finish_jobs(infos, job, status);
         job = job->next;
     }
 }

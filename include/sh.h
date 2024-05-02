@@ -13,7 +13,7 @@
     #include <sys/types.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
-    #define NB_BUILT_IN 10
+    #define NB_BUILT_IN 11
     #include <limits.h>
     #include <signal.h>
     #include "errno.h"
@@ -189,7 +189,9 @@ void start_a_job(infos_t *infos);
 void delete_jobs(infos_t *infos, job_t *job);
 void check_jobs_end(infos_t *infos);
 void finish_jobs(infos_t *infos, job_t *job, int status);
+
 int fg_func(infos_t *infos);
+int bg_func(infos_t *infos);
 
 typedef int (*command_func_t)(infos_t *, char *);
 

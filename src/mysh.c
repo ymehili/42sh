@@ -30,6 +30,7 @@ static void init_builtins(infos_t *infos)
     infos->built_in_command_name[7] = my_strdup("alias");
     infos->built_in_command_name[8] = my_strdup("unalias");
     infos->built_in_command_name[9] = my_strdup("fg");
+    infos->built_in_command_name[10] = my_strdup("bg");
     return;
 }
 
@@ -110,7 +111,7 @@ int mysh(int ac, char **av, char **env)
     infos_t *infos = init_infos(env);
     int (*built_in_commands[NB_BUILT_IN])(infos_t *) = {
         &cd_func, &setenv_func, &unsetenv_func, NULL, &env_func, &history_func,
-        &set_func, &alias_func, &unalias_func, &fg_func
+        &set_func, &alias_func, &unalias_func, &fg_func, &bg_func
     };
 
     file_rc(infos, built_in_commands);
