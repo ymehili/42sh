@@ -31,7 +31,7 @@ void if_child(infos_t *infos, int i, int pipe_fd[2],
         close(pipe_fd[0]);
         close(pipe_fd[1]);
     }
-    handle_redirection(infos);
+    handle_redirection(infos, pipe_fd);
     if (built_in_nb != -1)
         exit(exec_built_in(infos, built_in_nb, built_in_commands));
     execve(infos->input_parse[0], infos->input_parse, infos->env);

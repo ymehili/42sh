@@ -14,6 +14,7 @@
     #include <sys/wait.h>
     #include <sys/stat.h>
     #define NB_BUILT_IN 9
+    #define BUFFER_SIZE 1024
     #define MAX_ALIAS 100
     #include <limits.h>
     #include <signal.h>
@@ -79,6 +80,9 @@ struct infos_s {
     history_t *history;
     alias_t *alias;
     alias_set_t *alias_set;
+    int is_backtick;
+    char *backtick_output;
+    char *input_tmp_backtick;
 };
 
 typedef struct split_s {
@@ -136,7 +140,7 @@ int is_built_in_command(infos_t *infos, char *command);
 int exec_with_path(infos_t *infos);
 char *save_redirection(infos_t *infos, char *input);
 int is_redirection(infos_t *infos, char *str);
-void handle_redirection(infos_t *infos);
+void handle_redirection(infos_t *infos, int pipe_fd[2]);
 int is_num(char str);
 int is_alpha(char str);
 
@@ -171,6 +175,10 @@ int change_variable(infos_t *infos);
 char **splitforpipe(char *str, char *separators);
 char **shsplit(const char *str);
 int is_space(char character);
+int backtick(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *));
+void backtick_redirection(infos_t *infos, int pipe_fd[2]);
+char *backtick_red(infos_t *infos, int pipe_fd[2]);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
