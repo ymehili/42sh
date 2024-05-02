@@ -49,8 +49,11 @@ static void free_history(infos_t *infos)
     }
 }
 
-void free_all(infos_t *infos)
+int free_all(infos_t *infos)
 {
+    int exit_num = 0;
+
+    exit_num = infos->exit_code;
     free_var_ls(infos);
     free(infos->actual_path);
     free(infos->input);
@@ -60,4 +63,5 @@ void free_all(infos_t *infos)
     free_history(infos);
     free_alias(infos);
     free(infos);
+    return exit_num;
 }

@@ -7,10 +7,12 @@
 
 #include "../include/sh.h"
 
-static void wait_childs(infos_t *infos)
+static void wait_childs(infos_t *infos, int pipe_fd[2])
 {
     int status = 0;
 
+    if (infos->is_backtick)
+        infos->backtick_output = backtick_red(infos, pipe_fd);
     for (int i = 0; i <= infos->nb_pipe; i++) {
         wait(&status);
         infos->exit_code = status_code(status);
@@ -40,16 +42,23 @@ void if_child(infos_t *infos, int i, int pipe_fd[2],
     exit(1);
 }
 
+static void handle_pipe_bis(infos_t *infos, char **input, int i)
+{
+    if (is_redirection(infos, input[i]))
+        input[i] = save_redirection(infos, input[i]);
+    infos->input_parse = shsplit(input[i]);
+}
+
 int handle_pipe(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN])(infos_t *), char **input)
 {
     int pipe_fd[2];
 
     for (int i = 0; i <= infos->nb_pipe; i++) {
-        if (is_redirection(infos, input[i]))
-            input[i] = save_redirection(infos, input[i]);
-        infos->input_parse = shsplit(input[i]);
+        handle_pipe_bis(infos, input, i);
         if (i != infos->nb_pipe)
+            pipe(pipe_fd);
+        if (i == infos->nb_pipe && infos->is_backtick)
             pipe(pipe_fd);
         if (fork() == 0)
             if_child(infos, i, pipe_fd, built_in_commands);
@@ -60,6 +69,6 @@ int handle_pipe(infos_t *infos,
             infos->input_fd = pipe_fd[0];
         }
     }
-    wait_childs(infos);
+    wait_childs(infos, pipe_fd);
     return 0;
 }

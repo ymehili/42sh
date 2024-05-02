@@ -32,7 +32,7 @@ void backtick_redirection(infos_t *infos, int pipe_fd[2])
 }
 
 void replace_backtick(infos_t *infos,
-int (*built_in_commands[NB_BUILT_IN])(infos_t *), int i, int j)
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *), int i, int j)
 {
     char *cmd = my_strncpy(my_malloc(sizeof(char) * (j - i + 1)),
         &infos->input[i + 1], j - i - 1);
