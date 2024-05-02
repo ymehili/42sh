@@ -113,7 +113,7 @@ int get_nb_params(char **params);
 char **split_by_bracket(char *str);
 char *split_to_str(char **split, int at_end);
 char **strsplit(const char *str, const char *delim);
-void free_all(infos_t *infos);
+int free_all(infos_t *infos);
 
 int mysh(int ac, char **av, char **env);
 int return_error(char *name, char *str, int code);
