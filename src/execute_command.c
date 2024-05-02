@@ -66,25 +66,34 @@ int status_code(int status)
     return WEXITSTATUS(status);
 }
 
+static void child_execute_command(infos_t *infos, int pipe_fd[2])
+{
+    handle_redirection(infos, pipe_fd);
+    execve(infos->input_parse[0], infos->input_parse, infos->env);
+    exec_with_path(infos);
+    return_error(infos->input_parse[0], ": Command not found.\n", 1);
+    exit(1);
+}
+
 int execute_command(infos_t *infos,
     int (*built_in_commands[NB_BUILT_IN + 1])(infos_t *))
 {
     int status = 0;
     pid_t child;
     int built_in_nb = is_built_in_command(infos, infos->input_parse[0]);
+    int pipe_fd[2];
 
+    if (infos->is_backtick)
+        pipe(pipe_fd);
     if (built_in_nb != -1)
         return exec_built_in(infos, built_in_nb, built_in_commands);
     child = fork();
     if (child < 0)
         return 84;
-    else if (child == 0) {
-        handle_redirection(infos);
-        execve(infos->input_parse[0], infos->input_parse, infos->env);
-        exec_with_path(infos);
-        return_error(infos->input_parse[0], ": Command not found.\n", 1);
-        exit(1);
-    }
+    else if (child == 0)
+        child_execute_command(infos, pipe_fd);
+    if (infos->is_backtick)
+        infos->backtick_output = backtick_red(infos, pipe_fd);
     waitpid(child, &status, 0);
     return status_code(status);
 }

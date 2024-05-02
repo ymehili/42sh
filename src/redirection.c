@@ -81,7 +81,7 @@ void check_redirection(infos_t *infos)
     }
 }
 
-void handle_redirection(infos_t *infos)
+void handle_redirection(infos_t *infos, int pipe_fd[2])
 {
     check_redirection(infos);
     if (infos->input_type != 0) {
@@ -102,4 +102,5 @@ void handle_redirection(infos_t *infos)
                 O_CREAT | O_WRONLY | O_TRUNC, 0666);
         dup2(infos->output_fd, STDOUT_FILENO);
     }
+    backtick_redirection(infos, pipe_fd);
 }

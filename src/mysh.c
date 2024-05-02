@@ -89,14 +89,17 @@ int process_input(infos_t *infos,
         infos->exit_code = 1;
         return 1;
     }
-    if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
+    if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0
+        && infos->is_backtick == 0)
         infos->history = add_to_history(infos, my_strdup(infos->input));
     if (my_strncmp(infos->input, "alias", 5) != 0)
         find_alias(infos, infos->input);
     tmp = my_strdup(infos->input);
     if (change_variable(infos))
         return 1;
-    save_last_command_in_var(infos, tmp);
+    backtick(infos, built_in_commands);
+    if (infos->is_backtick == 0)
+        save_last_command_in_var(infos, tmp);
     parse_input(infos, built_in_commands);
     return 0;
 }
