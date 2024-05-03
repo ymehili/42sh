@@ -362,3 +362,14 @@ SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\nalias test6=ls -l -a -t -r -y\nunalias test\nalias\n' | $MYSHELL"
 [943-END]
+
+[944]
+NAME="test cd moulo"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+echo "cd src"
+echo "ls -l"
+echo "cd /"
+echo "ls bin"
+[944-END]
