@@ -57,3 +57,4 @@ vgcore.*
 *.gcda
 *.gcno
 unit_tests
+tester/myfile
