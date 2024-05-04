@@ -7,24 +7,24 @@
 
 #include "../include/sh.h"
 
-int cd_command(infos_t *infos, char *param, env_var_t *pwd, env_var_t *old_pwd)
+int cd_command(infos_t *infos, env_var_t *pwd, char *pwd_tmp)
 {
+    char *param = infos->input_parse[1];
+
     if (get_nb_params(infos->input_parse) == 1 ||
         !my_strncmp(param, "--", 3)) {
         chdir(get_env_var_linked_ls(infos->env_linked_ls, "HOME")->val);
-        old_pwd->val = pwd->val;
         pwd->val = get_env_var_linked_ls(infos->env_linked_ls, "HOME")->val;
         return 1;
     }
     if (!my_strncmp(param, "/", my_strlen(param))) {
         chdir("/");
-        old_pwd->val = pwd->val;
         pwd->val = my_strdup("/");
         return 1;
     }
     if (!my_strncmp(param, "-", my_strlen(param))) {
-        chdir(old_pwd->val);
-        pwd->val = old_pwd->val;
+        chdir(pwd_tmp);
+        pwd->val = pwd_tmp;
         return 1;
     }
     return 0;
@@ -41,17 +41,15 @@ static char *cd_wave(infos_t *infos)
     return tmp;
 }
 
-static int cd_2(infos_t *infos)
+static int cd_2(infos_t *infos, char *tmp2, env_var_t *pwd)
 {
     char buff[PATH_MAX];
     char *tmp = cd_wave(infos);
-    env_var_t *pwd = get_env_var_linked_ls(infos->env_linked_ls, "PWD");
-    env_var_t *old_pwd = get_env_var_linked_ls(infos->env_linked_ls, "OLDPWD");
 
-    if (chdir(infos->input_parse[1]) == 0) {
-        old_pwd->val = pwd->val;
+    if (chdir(infos->input_parse[1]) == 0)
         pwd->val = getcwd(buff, PATH_MAX);
-    } else {
+    else {
+        infos->last_pwd = tmp2;
         return cd_error(tmp);
     }
     return 0;
@@ -59,15 +57,17 @@ static int cd_2(infos_t *infos)
 
 int cd_func(infos_t *infos)
 {
-    char *param = infos->input_parse[1];
+    char *tmp;
     env_var_t *pwd = get_env_var_linked_ls(infos->env_linked_ls, "PWD");
-    env_var_t *old_pwd = get_env_var_linked_ls(infos->env_linked_ls, "OLDPWD");
+    char *pwd_tmp = infos->last_pwd;
 
-    if (cd_params_checker(infos->input_parse, old_pwd->val))
+    if (cd_params_checker(infos->input_parse, infos->last_pwd))
         return 1;
-    if (cd_command(infos, param, pwd, old_pwd))
+    tmp = infos->last_pwd;
+    infos->last_pwd = pwd->val;
+    if (cd_command(infos, pwd, pwd_tmp))
         return 0;
-    if (cd_2(infos))
+    if (cd_2(infos, tmp, pwd))
         return 1;
     return 0;
 }
