@@ -21,7 +21,10 @@ void start_a_job(infos_t *infos)
         infos->jobs = new_job;
     } else {
         new_job->prev = infos->jobs;
-        new_job->pos = infos->jobs->pos + 1;
+        if (new_job->prev != NULL)
+            new_job->pos = new_job->prev->pos + 1;
+        else
+            new_job->pos = 1;
         infos->jobs->next = new_job;
         infos->jobs = new_job;
     }

@@ -7,12 +7,26 @@
 
 #include "../include/sh.h"
 
+static void remove_backslash(job_t **my_job)
+{
+    char *command = (*my_job)->command;
+
+    for (int i = 0; command[i]; i++) {
+        if (command[i] == '/')
+            command[i] = ' ';
+    }
+}
+
 static int restart_bg_jobs(infos_t *infos, job_t *my_job)
 {
     int status = 0;
 
+    my_putstr("[");
+    my_putnbr(my_job->pos);
+    my_putstr("]\t");
+    remove_backslash(&my_job);
     write(1, my_job->command, strlen(my_job->command));
-    write(1, "\n", 1);
+    write(1, "&\n", 2);
     kill(my_job->pid, SIGCONT);
     return 0;
 }
