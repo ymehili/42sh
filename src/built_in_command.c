@@ -52,7 +52,7 @@ static int cd_2(infos_t *infos)
         old_pwd->val = pwd->val;
         pwd->val = getcwd(buff, PATH_MAX);
     } else {
-        return cd_error(tmp);
+        return cd_error(infos, tmp);
     }
     return 0;
 }
@@ -63,7 +63,7 @@ int cd_func(infos_t *infos)
     env_var_t *pwd = get_env_var_linked_ls(infos->env_linked_ls, "PWD");
     env_var_t *old_pwd = get_env_var_linked_ls(infos->env_linked_ls, "OLDPWD");
 
-    if (cd_params_checker(infos->input_parse, old_pwd->val))
+    if (cd_params_checker(infos, infos->input_parse, old_pwd->val))
         return 1;
     if (cd_command(infos, param, pwd, old_pwd))
         return 0;
@@ -90,7 +90,7 @@ int setenv_func(infos_t *infos)
         infos->input_parse[1]);
     env_var_t *new;
 
-    if (setenv_error_checker(infos->input_parse))
+    if (setenv_error_checker(infos, infos->input_parse))
         return 1;
     if (infos->input_parse[1] == NULL) {
         display_env(infos->env_linked_ls, "=");

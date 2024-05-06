@@ -38,7 +38,7 @@ void if_child(infos_t *infos, int i, int pipe_fd[2],
         exit(exec_built_in(infos, built_in_nb, built_in_commands));
     execve(infos->input_parse[0], infos->input_parse, infos->env);
     exec_with_path(infos);
-    return_error(infos->input_parse[0], ": Command not found.\n", 1);
+    return_error(infos, infos->input_parse[0], ": Command not found.\n", 1);
     exit(1);
 }
 

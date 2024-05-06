@@ -72,11 +72,13 @@ int parse_input(infos_t *infos,
     int pipeandor = 0;
 
     for (int i = 0; commands[i] != NULL; i++) {
+        check_jobs(infos, &commands, i);
         pipeandor = handle_and_or_pipe_commands(infos, built_in_commands,
             commands, i);
         if (pipeandor == 0)
             handle_redirection_and_execution(infos, built_in_commands,
                 commands, i);
     }
+    check_jobs_end(infos);
     return 0;
 }

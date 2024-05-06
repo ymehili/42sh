@@ -6,11 +6,14 @@
 */
 #include "../include/sh.h"
 
-int return_error(char *name, char *str, int code)
+int return_error(infos_t *infos, char *name, char *str, int code)
 {
-    write(2, name, my_strlen(name));
-    write(2, str, my_strlen(str));
-    return code;
+    if (infos->is_a_job != 1) {
+        write(2, name, my_strlen(name));
+        write(2, str, my_strlen(str));
+        return code;
+    }
+    return 0;
 }
 
 static void init_builtins(infos_t *infos)
@@ -26,6 +29,8 @@ static void init_builtins(infos_t *infos)
     infos->built_in_command_name[6] = my_strdup("set");
     infos->built_in_command_name[7] = my_strdup("alias");
     infos->built_in_command_name[8] = my_strdup("unalias");
+    infos->built_in_command_name[9] = my_strdup("fg");
+    infos->built_in_command_name[10] = my_strdup("bg");
     return;
 }
 
@@ -42,6 +47,7 @@ infos_t *init_infos(char **env)
     infos->exit_code = 0;
     infos->input_fd = STDIN_FILENO;
     infos->run = 1;
+    infos->is_a_job = 0;
     save_last_command_in_var(infos, NULL);
     return infos;
 }
@@ -110,7 +116,7 @@ int mysh(int ac, char **av, char **env)
     infos_t *infos = init_infos(env);
     int (*built_in_commands[NB_BUILT_IN])(infos_t *) = {
         &cd_func, &setenv_func, &unsetenv_func, NULL, &env_func, &history_func,
-        &set_func, &alias_func, &unalias_func
+        &set_func, &alias_func, &unalias_func, &fg_func, &bg_func
     };
 
     file_rc(infos, built_in_commands);
