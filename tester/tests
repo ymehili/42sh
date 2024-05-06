@@ -351,3 +351,19 @@ TESTS=
   echo 'echo $VAR'
   echo 'echo \$VAR'
 [951-END]
+
+[952]
+NAME="DivZero with core dump"
+SETUP="ulimit -c unlimited ; export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo './div_zero'
+[952-END]
+
+[953]
+NAME="DivZero without core dump"
+SETUP="ulimit -c 0 ; export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo './div_zero'
+[953-END]
