@@ -9,6 +9,7 @@
 int return_error(infos_t *infos, char *name, char *str, int code)
 {
     if (infos->is_a_job != 1) {
+        infos->exit_code = code;
         write(2, name, my_strlen(name));
         write(2, str, my_strlen(str));
         return code;
