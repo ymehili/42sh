@@ -67,7 +67,7 @@ int check_pipe(infos_t *infos, char *input)
 
     infos->nb_pipe = 0;
     for (int i = 0; input[i] != '\0'; i++)
-        if (input[i] == '|')
+        if (input[i] == '|' && input[i + 1] != '|')
             infos->nb_pipe++;
     if (infos->nb_pipe == 0)
         return 0;
