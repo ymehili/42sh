@@ -19,8 +19,6 @@ static void remove_backslash(job_t **my_job)
 
 static int restart_bg_jobs(infos_t *infos, job_t *my_job)
 {
-    int status = 0;
-
     my_putstr("[");
     my_putnbr(my_job->pos);
     my_putstr("]\t");

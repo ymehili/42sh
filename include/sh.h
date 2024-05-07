@@ -236,6 +236,9 @@ typedef struct shsplit_s {
     int token_index;
 } shsplit_t;
 
+void process_string(shsplit_t *shsplit);
+void shsplit2(shsplit_t *shsplit);
+
 void get_cwd(infos_t *infos);
 
 int alias_func(infos_t *infos);

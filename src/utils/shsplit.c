@@ -79,7 +79,7 @@ static int isspacesure(shsplit_t *shsplit, int i)
         !is_space(shsplit->str[i + 1]);
 }
 
-static void process_string(shsplit_t *shsplit)
+void process_string(shsplit_t *shsplit)
 {
     for (int i = 0; shsplit->str[i] != '\0'; i++) {
         if (shsplit->str[i] == '\\') {
