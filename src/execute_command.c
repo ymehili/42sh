@@ -51,17 +51,23 @@ int exec_with_path(infos_t *infos)
 int status_code(int status)
 {
     if (WIFSIGNALED(status)) {
-        if (WTERMSIG(status) == SIGSEGV) {
-            my_putstr("Segmentation fault\n");
-            return 1;
+        switch (WTERMSIG(status)) {
+            case SIGSEGV:
+                my_putstr("Segmentation fault\n");
+                return 1;
+            case SIGFPE:
+                my_putstr("Floating exception\n");
+                return 1;
+            default:
+                return WEXITSTATUS(status);
         }
-        return WEXITSTATUS(status);
     }
     if (WIFEXITED(status)) {
         if (WEXITSTATUS(status) == 126) {
             my_putstr("Wrong architecture\n");
             return 1;
         }
+        return WEXITSTATUS(status);
     }
     return WEXITSTATUS(status);
 }

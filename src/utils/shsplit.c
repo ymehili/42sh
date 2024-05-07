@@ -65,9 +65,11 @@ static void shsplit3(shsplit_t *shsplit)
             continue;
         if (handle_space(shsplit, i))
             continue;
-        shsplit->tokens[shsplit->token_index][shsplit->current_token_size]
-            = shsplit->str[i];
-        shsplit->current_token_size++;
+        if (shsplit->token_index < shsplit->num_tokens) {
+            shsplit->tokens[shsplit->token_index][shsplit->current_token_size]
+                = shsplit->str[i];
+            shsplit->current_token_size++;
+        }
     }
 }
 
@@ -106,7 +108,7 @@ void shsplit2(shsplit_t *shsplit)
     process_string(shsplit);
     if (shsplit->quote_char == '\0' && shsplit->current_token_size > 0)
         shsplit->num_tokens++;
-    shsplit->tokens = my_malloc(sizeof(char *) * (shsplit->num_tokens + 1));
+    shsplit->tokens = my_malloc(sizeof(char *) * (shsplit->num_tokens + 10));
     for (int i = 0; i < shsplit->num_tokens; i++) {
         shsplit->tokens[i] = my_malloc(100);
     }
@@ -124,16 +126,29 @@ void removeleading(shsplit_t *shsplit)
     shsplit->str = new_str;
 }
 
-char **shsplit(const char *str)
+shsplit_t *initshsplit(void)
 {
     shsplit_t *shsplit = my_malloc(sizeof(shsplit_t));
 
     shsplit->num_tokens = 0;
     shsplit->current_token_size = 0;
     shsplit->quote_char = '\0';
+    return shsplit;
+}
+
+
+char **shsplit(const char *str)
+{
+    shsplit_t *shsplit = initshsplit();
+
     shsplit->str = strdup(str);
     removeleading(shsplit);
     shsplit2(shsplit);
+    if (shsplit->num_tokens == 0) {
+        shsplit->tokens[0] = strdup(str);
+        shsplit->tokens[1] = NULL;
+        return shsplit->tokens;
+    }
     shsplit->token_index = 0;
     shsplit->current_token_size = 0;
     shsplit->quote_char = '\0';

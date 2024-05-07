@@ -69,11 +69,11 @@ static int check_pipe_2(char **pipe_commands)
 int check_pipe(infos_t *infos, char *input)
 {
     int nb = 0;
-    char **pipe_commands = split(input, "|");
+    char **pipe_commands = splitforpipe(input, "|");
 
     infos->nb_pipe = 0;
     for (int i = 0; input[i] != '\0'; i++)
-        if (input[i] == '|')
+        if (input[i] == '|' && input[i + 1] != '|')
             infos->nb_pipe++;
     if (infos->nb_pipe == 0)
         return 0;
