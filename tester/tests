@@ -339,13 +339,13 @@ NAME="Use magic quotes in a pipe with a command"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS=
-  echo 'ls -l /etc | grep 'sh''
+  echo "ls -l /etc | grep 'sh'"
 [950-END]
 
 [951]
-NAME
+NAME="Use simple magic quotes for variable expansion"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN="Use simple magic quotes for variable expansion"
+CLEAN=""
 TESTS=
   echo 'VAR="hello world"'
   echo 'echo $VAR'
