@@ -43,9 +43,10 @@ static int find_separator(char *str, char *separators)
 {
     int i = 0;
 
-    while (str[i] != '\0') {
-        if (strchr(separators, str[i]) != NULL) {
-            return i;
+    while (str[i + 1] != '\0') {
+        if (strchr(separators, str[i]) != NULL &&
+            str[i - 1] != '&' && str[i + 1] != '&') {
+                return i;
         }
         i++;
     }
@@ -93,13 +94,14 @@ void check_jobs(infos_t *infos, char ***command, int i)
 
     if (new_command[1] != NULL)
         return realloc_command(infos, command, i, new_command);
-    for (int t = 0; (*command)[i][t + 1] != '\0'; t++)
-        if ((*command)[i][t] == '&') {
+    for (int t = 0; (*command)[i][t + 1] != '\0'; t++) {
+        if ((*command)[i][t] == '&' && (*command)[i][t - 1] != '&'
+            && (*command)[i][t + 1] != '&') {
             start_a_job(infos);
             infos->is_a_job = 1;
             infos->jobs->command = my_strdup((*command)[i]);
-            printf("ma nouvelle case est : (%s)\n", (*command)[i]);
         }
+    }
     free((*command)[i]);
     (*command)[i] = new_command[0];
     return;

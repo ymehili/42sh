@@ -13,7 +13,8 @@ static int wait_fg_jobs(infos_t *infos, job_t *my_job)
 
     write(1, my_job->command, strlen(my_job->command));
     write(1, "\n", 1);
-    waitpid(my_job->pid, &status, 0);
+    signal(SIGTSTP, SIG_DFL);
+    waitpid(my_job->pid, &status, WUNTRACED);
     delete_jobs(infos, my_job);
     return 0;
 }
