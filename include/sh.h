@@ -13,7 +13,8 @@
     #include <sys/types.h>
     #include <sys/wait.h>
     #include <sys/stat.h>
-    #define NB_BUILT_IN 9
+    #define NB_BUILT_IN 11
+    #define BUFFER_SIZE 1024
     #define MAX_ALIAS 100
     #include <limits.h>
     #include <signal.h>
@@ -56,6 +57,17 @@ struct alias_s {
     alias_t *prev;
 };
 
+typedef struct job_s job_t;
+
+struct job_s {
+    pid_t pid;
+    int pos;
+    int finished;
+    char *command;
+    job_t *prev;
+    job_t *next;
+};
+
 typedef struct infos_s infos_t;
 struct infos_s {
     char **env;
@@ -79,6 +91,12 @@ struct infos_s {
     history_t *history;
     alias_t *alias;
     alias_set_t *alias_set;
+    int is_backtick;
+    char *backtick_output;
+    char *input_tmp_backtick;
+    job_t *jobs;
+    job_t *first_job;
+    int is_a_job;
 };
 
 typedef struct split_s {
@@ -89,6 +107,8 @@ typedef struct split_s {
     int result_index;
     int start;
 } split_t;
+
+
 
 void *my_memset(void *ptr, char c, int size);
 void *my_malloc(int size);
@@ -109,10 +129,10 @@ int get_nb_params(char **params);
 char **split_by_bracket(char *str);
 char *split_to_str(char **split, int at_end);
 char **strsplit(const char *str, const char *delim);
-void free_all(infos_t *infos);
+int free_all(infos_t *infos);
 
 int mysh(int ac, char **av, char **env);
-int return_error(char *name, char *str, int code);
+int return_error(infos_t *infos, char *name, char *str, int code);
 char *get_env_var(char **env, char *var_name);
 int cd_func(infos_t *infos);
 int setenv_func(infos_t *infos);
@@ -122,9 +142,9 @@ env_var_t *get_env_var_linked_ls(env_var_t *env, char *var_name);
 void display_env(env_var_t *env_ls, char *sep);
 int env_func(infos_t *infos);
 int unsetenv_error_checker(char **params);
-int setenv_error_checker(char **params);
-int cd_error(char *str);
-int cd_params_checker(char **params, char *last_pwd);
+int setenv_error_checker(infos_t *infos, char **params);
+int cd_error(infos_t *infos, char *str);
+int cd_params_checker(infos_t *infos, char **params, char *last_pwd);
 int exec_built_in(infos_t *infos, int built_in_nb,
     int (*built_in_commands[NB_BUILT_IN + 1])(infos_t *));
 int execute_command(infos_t *infos,
@@ -136,8 +156,9 @@ int is_built_in_command(infos_t *infos, char *command);
 int exec_with_path(infos_t *infos);
 char *save_redirection(infos_t *infos, char *input);
 int is_redirection(infos_t *infos, char *str);
-void handle_redirection(infos_t *infos);
+void handle_redirection(infos_t *infos, int pipe_fd[2]);
 int is_num(char str);
+int is_not_num(char str);
 int is_alpha(char str);
 
 history_t *add_to_history(infos_t *infos, char *command);
@@ -171,6 +192,22 @@ int change_variable(infos_t *infos);
 char **splitforpipe(char *str, char *separators);
 char **shsplit(const char *str);
 int is_space(char character);
+int backtick(infos_t *infos,
+    int (*built_in_commands[NB_BUILT_IN])(infos_t *));
+void backtick_redirection(infos_t *infos, int pipe_fd[2]);
+char *backtick_red(infos_t *infos, int pipe_fd[2]);
+
+void check_jobs(infos_t *infos, char ***command, int i);
+void realloc_command(infos_t *infos, char ***command, int i,
+    char **new_command);
+
+void start_a_job(infos_t *infos);
+void delete_jobs(infos_t *infos, job_t *job);
+void check_jobs_end(infos_t *infos);
+void finish_jobs(infos_t *infos, job_t *job, int status);
+
+int fg_func(infos_t *infos);
+int bg_func(infos_t *infos);
 
 typedef int (*command_func_t)(infos_t *, char *);
 
@@ -198,6 +235,9 @@ typedef struct shsplit_s {
     char **tokens;
     int token_index;
 } shsplit_t;
+
+void process_string(shsplit_t *shsplit);
+void shsplit2(shsplit_t *shsplit);
 
 void get_cwd(infos_t *infos);
 

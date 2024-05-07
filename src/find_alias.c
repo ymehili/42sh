@@ -73,6 +73,8 @@ int find_alias(infos_t *infos, char *command)
     command_copy[strlen(command_copy) - 1] = '\0';
     do {
         token = strtok(command_copy, " ");
+        if (token == NULL)
+            break;
         alias_found = process_token(tmp, infos, &command_copy, token);
         if (alias_found == false || token == NULL)
             break;

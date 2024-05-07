@@ -66,28 +66,28 @@ char *save_redirection(infos_t *infos, char *input)
 void check_redirection(infos_t *infos)
 {
     if (infos->input_type != 0 && infos->in_file_name == NULL) {
-        return_error(NULL, "Missing name for redirect.\n", 1);
+        return_error(infos, NULL, "Missing name for redirect.\n", 1);
         exit(1);
     }
     if (infos->output_type != 0 && infos->out_file_name == NULL) {
-        return_error(NULL, "Missing name for redirect.\n", 1);
+        return_error(infos, NULL, "Missing name for redirect.\n", 1);
         exit(1);
     }
     if (infos->input_type != 0 && infos->output_type != 0 &&
         my_strcmp(infos->in_file_name, infos->out_file_name) == 0) {
-        return_error(infos->input_parse[0],
+        return_error(infos, infos->input_parse[0],
             ": (standard input): input file is also output\n", 1);
         exit(1);
     }
 }
 
-void handle_redirection(infos_t *infos)
+void handle_redirection(infos_t *infos, int pipe_fd[2])
 {
     check_redirection(infos);
     if (infos->input_type != 0) {
         infos->input_fd = open(infos->in_file_name, O_RDONLY);
         if (infos->input_fd == -1) {
-            return_error(infos->in_file_name,
+            return_error(infos, infos->in_file_name,
                 ": No such file or directory.\n", 1);
             exit(1);
         }
@@ -102,4 +102,5 @@ void handle_redirection(infos_t *infos)
                 O_CREAT | O_WRONLY | O_TRUNC, 0666);
         dup2(infos->output_fd, STDOUT_FILENO);
     }
+    backtick_redirection(infos, pipe_fd);
 }

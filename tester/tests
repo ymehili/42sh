@@ -144,13 +144,6 @@ TESTS=
   echo 'history'
 [914-END]
 
-[915]
-NAME="execute last command"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!!\n' | $MYSHELL"
-[915-END]
-
 [916]
 NAME="execute last command with nothing in history"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
@@ -158,103 +151,6 @@ CLEAN=""
 TESTS=
   echo '!!'
 [916-END]
-
-[917]
-NAME="search n command in history"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!n\n' | $MYSHELL"
-[917-END]
-
-[918]
-NAME="search n command in history will not exist"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!100\n' | $MYSHELL"
-[918-END]
-
-[919]
-NAME="search n command before last in history"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!-2\n' | $MYSHELL"
-[919-END]
-
-[920]
-NAME="search n command before last in history will not exist"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!-100\n' | $MYSHELL"
-[920-END]
-
-[921]
-NAME="search history with string"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!p\n' | $MYSHELL"
-[921-END]
-
-[922]
-NAME="search history with string will not exist"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\n!toto\n' | $MYSHELL"
-[922-END]
-
-[923]
-NAME="search args in history"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\nls !:1\n' | $MYSHELL"
-[923-END]
-
-[924]
-NAME="search args in history will not exist"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\nls !:100\n' | $MYSHELL"
-[924-END]
-[925]
-NAME="search last history args"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l\nls !$\n' | $MYSHELL"
-[925-END]
-
-[926]
-NAME="search last history args will not exist"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls \nls !$\n' | $MYSHELL"
-[926-END]
-
-[927]
-NAME="search all history args"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l -a\nls !*\n' | $MYSHELL"
-[927-END]
-
-[928]
-NAME="search all history args will not exist"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls\nls !*\n' | $MYSHELL"
-[928-END]
-
-[929]
-NAME="search plage history args"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l -a\nls !:1-2\n' | $MYSHELL"
-[929-END]
-
-[930]
-NAME="search plage history args will not exist"
-SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
-CLEAN=""
-TESTS="printf 'cd ..\npwd\ncd /usr\nls -l -a\nls !:1-100\n' | $MYSHELL"
-[930-END]
 
 [931]
 NAME="test set builtin"
@@ -307,58 +203,167 @@ echo 'echo $test'
 [935-END]
 
 [936]
-NAME="test set new value to read only var "
+NAME="Change to a specific directory"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
 TESTS=
-echo 'set test=2'
-echo 'echo $test'
+  echo 'cd /tmp'
+  echo 'pwd'
 [936-END]
+
 [937]
-NAME="test var substitution with command"
+NAME="Change to the parent directory"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
-TESTS="printf 'ls\necho $_\n' | $MYSHELL"
+TESTS=
+  echo 'cd ..'
+  echo 'pwd'
 [937-END]
 
 [938]
-NAME="test var substitution with command"
+NAME="Change to the home directory"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
-TESTS="printf 'ls\necho $?\n' | $MYSHELL"
+TESTS=
+  echo 'cd ~'
+  echo 'pwd'
 [938-END]
 
 [939]
-NAME="create alias"
+NAME="Change to a non existing directory"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
-TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\n' | $MYSHELL"
+TESTS=
+  echo 'cd /this/is/not/a/directory'
+  echo 'pwd'
 [939-END]
 
 [940]
-NAME="create alias error"
+NAME="Change to a file"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
-TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\nalias test6=ls -l -a -t -r -y\n' | $MYSHELL"
+TESTS=
+  echo 'touch myfile'
+  echo 'cd myfile'
+  echo 'pwd'
+  echo 'rm myfile'
 [940-END]
 
 [941]
-NAME="print alias"
+NAME="Change to the previous directory"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
-TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\nalias test6=ls -l -a -t -r -y\nalias\n' | $MYSHELL"
+TESTS=
+  echo 'cd /tmp'
+  echo 'pwd'
+  echo 'cd ..'
+  echo 'pwd'
+  echo 'cd -'
+  echo 'pwd'
 [941-END]
 
 [942]
-NAME="search alias"
+NAME="Try to change directory to a non-directory executable"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
-TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\nalias test6=ls -l -a -t -r -y\nalias test\n' | $MYSHELL"
+TESTS=
+  echo 'chmod +x /bin/ls'
+  echo 'cd /bin/ls'
+  echo 'pwd'
+  echo 'chmod -x /bin/ls'
 [942-END]
 
 [943]
-NAME="unset alias"
+NAME="Run a program that causes a division by zero with core dump enabled"
 SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
 CLEAN=""
-TESTS="printf 'alias test=ls\nalias test2=ls -l\nalias test3=ls -l -a\nalias test4=ls -l -a -t\nalias test5=ls -l -a -t -r\nalias test6=ls -l -a -t -r -y\nunalias test\nalias\n' | $MYSHELL"
+TESTS=
+  echo './my_divzero'
+  echo 'file core.*'
 [943-END]
+
+[944]
+NAME="Try to execute a directory"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo 'exec /tmp'
+  echo 'pwd'
+[944-END]
+
+[945]
+NAME="Run multiple commands separated by semicolon"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo 'ls -l ; echo hello world'
+[945-END]
+
+[946]
+NAME="Run the second command only if the first command succeeds"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo 'ls /etc && echo success'
+  echo 'ls /doesnt/exist && echo success'
+[946-END]
+
+[947]
+NAME="Run the second command if the first command fails"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo 'ls /doesnt/exist || echo file not found'
+  echo 'ls /etc || echo error'
+[947-END]
+
+[948]
+NAME="Use wildcards to match multiple files"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo 'ls -l *.sh'
+[948-END]
+
+[949]
+NAME="Execute the result of a command substitution with magic quotes"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo 'VAR=$(echo pwd)'
+  echo 'exec $VAR'
+[949-END]
+
+[950]
+NAME="Use magic quotes in a pipe with a command"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo "ls -l /etc | grep 'sh'"
+[950-END]
+
+[951]
+NAME="Use simple magic quotes for variable expansion"
+SETUP="export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo 'VAR="hello world"'
+  echo 'echo $VAR'
+  echo 'echo \$VAR'
+[951-END]
+
+[952]
+NAME="DivZero with core dump"
+SETUP="ulimit -c unlimited ; export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo './div_zero'
+[952-END]
+
+[953]
+NAME="DivZero without core dump"
+SETUP="ulimit -c 0 ; export TERM=xterm ; PATH='/bin:/usr/bin'"
+CLEAN=""
+TESTS=
+  echo './div_zero'
+[953-END]

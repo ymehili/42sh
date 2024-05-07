@@ -20,3 +20,10 @@ int is_num(char str)
         return 0;
     return 1;
 }
+
+int is_not_num(char str)
+{
+    if (!(str < '0' || str > '9'))
+        return 1;
+    return 0;
+}

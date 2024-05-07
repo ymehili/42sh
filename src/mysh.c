@@ -6,11 +6,15 @@
 */
 #include "../include/sh.h"
 
-int return_error(char *name, char *str, int code)
+int return_error(infos_t *infos, char *name, char *str, int code)
 {
-    write(2, name, my_strlen(name));
-    write(2, str, my_strlen(str));
-    return code;
+    if (infos->is_a_job != 1) {
+        infos->exit_code = code;
+        write(2, name, my_strlen(name));
+        write(2, str, my_strlen(str));
+        return code;
+    }
+    return 0;
 }
 
 static void init_builtins(infos_t *infos)
@@ -26,6 +30,8 @@ static void init_builtins(infos_t *infos)
     infos->built_in_command_name[6] = my_strdup("set");
     infos->built_in_command_name[7] = my_strdup("alias");
     infos->built_in_command_name[8] = my_strdup("unalias");
+    infos->built_in_command_name[9] = my_strdup("fg");
+    infos->built_in_command_name[10] = my_strdup("bg");
     return;
 }
 
@@ -42,6 +48,7 @@ infos_t *init_infos(char **env)
     infos->exit_code = 0;
     infos->input_fd = STDIN_FILENO;
     infos->run = 1;
+    infos->is_a_job = 0;
     save_last_command_in_var(infos, NULL);
     return infos;
 }
@@ -63,11 +70,11 @@ static int check_pipe_2(char **pipe_commands)
 int check_pipe(infos_t *infos, char *input)
 {
     int nb = 0;
-    char **pipe_commands = split(input, "|");
+    char **pipe_commands = splitforpipe(input, "|");
 
     infos->nb_pipe = 0;
     for (int i = 0; input[i] != '\0'; i++)
-        if (input[i] == '|')
+        if (input[i] == '|' && input[i + 1] != '|')
             infos->nb_pipe++;
     if (infos->nb_pipe == 0)
         return 0;
@@ -89,14 +96,17 @@ int process_input(infos_t *infos,
         infos->exit_code = 1;
         return 1;
     }
-    if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0)
+    if (infos->exit_code != 1 && my_strcmp(infos->input, "history\n") != 0
+        && infos->is_backtick == 0)
         infos->history = add_to_history(infos, my_strdup(infos->input));
     if (my_strncmp(infos->input, "alias", 5) != 0)
         find_alias(infos, infos->input);
     tmp = my_strdup(infos->input);
     if (change_variable(infos))
         return 1;
-    save_last_command_in_var(infos, tmp);
+    backtick(infos, built_in_commands);
+    if (infos->is_backtick == 0)
+        save_last_command_in_var(infos, tmp);
     parse_input(infos, built_in_commands);
     return 0;
 }
@@ -107,7 +117,7 @@ int mysh(int ac, char **av, char **env)
     infos_t *infos = init_infos(env);
     int (*built_in_commands[NB_BUILT_IN])(infos_t *) = {
         &cd_func, &setenv_func, &unsetenv_func, NULL, &env_func, &history_func,
-        &set_func, &alias_func, &unalias_func
+        &set_func, &alias_func, &unalias_func, &fg_func, &bg_func
     };
 
     file_rc(infos, built_in_commands);
@@ -119,8 +129,7 @@ int mysh(int ac, char **av, char **env)
             break;
         process_input(infos, built_in_commands);
     }
-    free_all(infos);
     if (infos->run == 1 && isatty(0) != 0)
         my_putstr("exit\n");
-    return infos->exit_code;
+    return free_all(infos);
 }

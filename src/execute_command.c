@@ -51,19 +51,61 @@ int exec_with_path(infos_t *infos)
 int status_code(int status)
 {
     if (WIFSIGNALED(status)) {
-        if (WTERMSIG(status) == SIGSEGV) {
-            my_putstr("Segmentation fault\n");
-            return 1;
+        switch (WTERMSIG(status)) {
+            case SIGSEGV:
+                my_putstr("Segmentation fault\n");
+                return 1;
+            case SIGFPE:
+                my_putstr("Floating exception\n");
+                return 1;
+            default:
+                return WEXITSTATUS(status);
         }
-        return WEXITSTATUS(status);
     }
     if (WIFEXITED(status)) {
         if (WEXITSTATUS(status) == 126) {
             my_putstr("Wrong architecture\n");
             return 1;
         }
+        return WEXITSTATUS(status);
     }
     return WEXITSTATUS(status);
+}
+
+static void child_execute_command(infos_t *infos, int pipe_fd[2])
+{
+    handle_redirection(infos, pipe_fd);
+    execve(infos->input_parse[0], infos->input_parse, infos->env);
+    exec_with_path(infos);
+    return_error(infos, infos->input_parse[0], ": Command not found.\n", 1);
+    exit(1);
+}
+
+static void check_suspend_command(infos_t *infos, pid_t child, int status)
+{
+    if (WSTOPSIG(status) == SIGTSTP) {
+        write(1, "\nSuspended\n", 11);
+        start_a_job(infos);
+        infos->jobs->pid = child;
+        infos->jobs->command = split_to_str(infos->input_parse, 1);
+    }
+}
+
+static int execute_job(infos_t *infos, pid_t child, int status)
+{
+    if (infos->is_a_job == 1) {
+        infos->jobs->pid = child;
+        my_putstr("[");
+        my_putnbr(infos->jobs->pos);
+        my_putstr("] ");
+        my_putnbr(infos->jobs->pid);
+        my_putstr("\n");
+        infos->is_a_job = 0;
+    } else {
+        waitpid(child, &status, WUNTRACED);
+        check_suspend_command(infos, child, status);
+    }
+    return status_code(status);
 }
 
 int execute_command(infos_t *infos,
@@ -72,19 +114,21 @@ int execute_command(infos_t *infos,
     int status = 0;
     pid_t child;
     int built_in_nb = is_built_in_command(infos, infos->input_parse[0]);
+    int pipe_fd[2];
 
+    if (infos->is_backtick)
+        pipe(pipe_fd);
     if (built_in_nb != -1)
         return exec_built_in(infos, built_in_nb, built_in_commands);
+    signal(SIGTSTP, SIG_IGN);
     child = fork();
     if (child < 0)
         return 84;
     else if (child == 0) {
-        handle_redirection(infos);
-        execve(infos->input_parse[0], infos->input_parse, infos->env);
-        exec_with_path(infos);
-        return_error(infos->input_parse[0], ": Command not found.\n", 1);
-        exit(1);
+        signal(SIGTSTP, SIG_DFL);
+        child_execute_command(infos, pipe_fd);
     }
-    waitpid(child, &status, 0);
-    return status_code(status);
+    if (infos->is_backtick)
+        infos->backtick_output = backtick_red(infos, pipe_fd);
+    return execute_job(infos, child, status);
 }
