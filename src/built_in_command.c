@@ -60,7 +60,7 @@ int cd_func(infos_t *infos)
     env_var_t *pwd = get_env_var_linked_ls(infos->env_linked_ls, "PWD");
     char *pwd_tmp = infos->last_pwd;
 
-    if (cd_params_checker(infos, infos->input_parse, old_pwd->val))
+    if (cd_params_checker(infos, infos->input_parse, pwd_tmp))
         return 1;
     tmp = infos->last_pwd;
     infos->last_pwd = pwd->val;

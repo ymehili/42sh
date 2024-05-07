@@ -103,17 +103,6 @@ static void process_string(shsplit_t *shsplit)
     }
 }
 
-void shsplit2(shsplit_t *shsplit)
-{
-    process_string(shsplit);
-    if (shsplit->quote_char == '\0' && shsplit->current_token_size > 0)
-        shsplit->num_tokens++;
-    shsplit->tokens = my_malloc(sizeof(char *) * (shsplit->num_tokens + 10));
-    for (int i = 0; i < shsplit->num_tokens; i++) {
-        shsplit->tokens[i] = my_malloc(100);
-    }
-}
-
 void removeleading(shsplit_t *shsplit)
 {
     int space_count = 0;
@@ -135,7 +124,6 @@ shsplit_t *initshsplit(void)
     shsplit->quote_char = '\0';
     return shsplit;
 }
-
 
 char **shsplit(const char *str)
 {
