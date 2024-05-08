@@ -23,7 +23,6 @@ char **strsplit(const char *input, const char *delimiter)
         end = strstr(start, delimiter);
     }
     result[i] = strdup(start);
-    result[i + 1] = NULL;
     free(string);
     return result;
 }

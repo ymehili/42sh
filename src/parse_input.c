@@ -40,15 +40,16 @@ static int handle_and_or_pipe_commands(infos_t *infos,
     char **pipe_commands = splitforpipe(command, "|");
     int ret = 0;
 
-    if (and_commands[1] != NULL){
+    if (and_commands[0][0] != '\n' && and_commands[1] != NULL){
         handle_and(infos, built_in_commands, and_commands);
         ret = 1;
     }
-    if (or_commands[1] != NULL){
+    if (and_commands[0][0] != '\n' && or_commands[1] != NULL){
         handle_or(infos, built_in_commands, or_commands);
         ret = 1;
     }
-    if (pipe_commands[1] != NULL && !check_pipe(infos, command) && ret == 0){
+    if (and_commands[0][0] != '\n' && pipe_commands[1] != NULL &&
+        !check_pipe(infos, command) && ret == 0){
         handle_pipe(infos, built_in_commands, pipe_commands);
         ret = 1;
     }

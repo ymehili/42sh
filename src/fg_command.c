@@ -11,11 +11,13 @@ static int wait_fg_jobs(infos_t *infos, job_t *my_job)
 {
     int status = 0;
 
-    write(1, my_job->command, strlen(my_job->command));
-    write(1, "\n", 1);
-    signal(SIGTSTP, SIG_DFL);
-    waitpid(my_job->pid, &status, WUNTRACED);
-    delete_jobs(infos, my_job);
+    if (my_job != NULL) {
+        write(1, my_job->command, strlen(my_job->command));
+        write(1, "\n", 1);
+        signal(SIGTSTP, SIG_DFL);
+        waitpid(my_job->pid, &status, WUNTRACED);
+        delete_jobs(infos, my_job);
+    }
     return 0;
 }
 
@@ -27,12 +29,13 @@ static int start_first_job(infos_t *infos, char **all_command, int i)
             return 1;
         }
     }
-    return (wait_fg_jobs(infos, infos->jobs));
+    return (wait_fg_jobs(infos, infos->first_job));
 }
 
 static int start_fg(infos_t *infos, char **all_command, int i)
 {
     int my_pos = 0;
+    job_t *my_job = infos->first_job;
 
     for (int t = 0; all_command[i][t] != '\0'; t++) {
         if (is_not_num(all_command[i][t]) == 0) {
@@ -41,8 +44,7 @@ static int start_fg(infos_t *infos, char **all_command, int i)
         }
     }
     my_pos = my_getnbr(all_command[i]);
-    for (job_t *my_job = infos->first_job; my_job != NULL;
-        my_job = my_job->next) {
+    for (; my_job != NULL; my_job = my_job->next) {
         if (my_job->pos == my_pos)
             return (wait_fg_jobs(infos, my_job));
     }
@@ -55,16 +57,15 @@ int fg_func(infos_t *infos)
     char *command = my_strdup(infos->input);
     char **all_command = NULL;
 
-    command += 2;
     all_command = split(command, " \n");
-    if (all_command[1] == NULL)
-        return (wait_fg_jobs(infos, infos->jobs));
-    for (int i = 0; all_command[i]; i++) {
+    if (all_command[1] == NULL) {
+        return (wait_fg_jobs(infos, infos->first_job));
+    }
+    for (int i = 1; all_command[i]; i++) {
         if (all_command[i][0] == '%') {
             all_command[i] ++;
             start_fg(infos, all_command, i);
-        }
-        if (all_command[i][0] != '%') {
+        } else {
             start_first_job(infos, all_command, i);
         }
     }

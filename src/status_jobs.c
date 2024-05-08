@@ -30,15 +30,15 @@ void delete_jobs(infos_t *infos, job_t *job)
         infos->first_job = job->next;
         if (job->next != NULL) {
             job->next->prev = NULL;
+        } else {
+            infos->jobs = NULL;
         }
+    } else if (job->next == NULL) {
+        job->prev->next = NULL;
+        infos->jobs = job->prev;
     } else {
         job->prev->next = job->next;
-        if (job->next != NULL) {
-            job->next->prev = job->prev;
-            return;
-        }
-    job->prev->next = NULL;
-    job = job->prev;
+        job->next->prev = job->prev;
     }
 }
 
