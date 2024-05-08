@@ -19,13 +19,15 @@ static void remove_backslash(job_t **my_job)
 
 static int restart_bg_jobs(infos_t *infos, job_t *my_job)
 {
-    my_putstr("[");
-    my_putnbr(my_job->pos);
-    my_putstr("]\t");
-    remove_backslash(&my_job);
-    write(1, my_job->command, strlen(my_job->command));
-    write(1, "&\n", 2);
-    kill(my_job->pid, SIGCONT);
+    if (my_job != NULL) {
+        my_putstr("[");
+        my_putnbr(my_job->pos);
+        my_putstr("]\t");
+        remove_backslash(&my_job);
+        write(1, my_job->command, strlen(my_job->command));
+        write(1, "&\n", 2);
+        kill(my_job->pid, SIGCONT);
+    }
     return 0;
 }
 
@@ -37,7 +39,7 @@ static int start_first_job(infos_t *infos, char **all_command, int i)
             return 1;
         }
     }
-    return (restart_bg_jobs(infos, infos->jobs));
+    return (restart_bg_jobs(infos, infos->first_job));
 }
 
 static int start_bg(infos_t *infos, char **all_command, int i)
@@ -65,16 +67,15 @@ int bg_func(infos_t *infos)
     char *command = my_strdup(infos->input);
     char **all_command = NULL;
 
-    command += 2;
     all_command = split(command, " \n");
-    if (all_command[1] == NULL)
-        return (restart_bg_jobs(infos, infos->jobs));
-    for (int i = 0; all_command[i]; i++) {
+    if (all_command[1] == NULL) {
+        return (restart_bg_jobs(infos, infos->first_job));
+    }
+    for (int i = 1; all_command[i]; i++) {
         if (all_command[i][0] == '%') {
             all_command[i] ++;
             start_bg(infos, all_command, i);
-        }
-        if (all_command[i][0] != '%') {
+        } else {
             start_first_job(infos, all_command, i);
         }
     }
