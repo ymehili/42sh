@@ -74,6 +74,10 @@ int parse_input(infos_t *infos,
     int pipeandor = 0;
 
     for (int i = 0; commands[i] != NULL; i++) {
+        if (commands[i][my_strlen(commands[i]) - 1] != '\n')
+            commands[i] = my_strcat(commands[i], "\n");
+    }
+    for (int i = 0; commands[i] != NULL; i++) {
         check_jobs(infos, &commands, i);
         pipeandor = handle_and_or_pipe_commands(infos, built_in_commands,
             commands, i);
