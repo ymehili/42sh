@@ -1,5 +1,5 @@
 # 42sh 🚀
-Welcome to 42sh, a Unix shell project. This project is a part of the curriculum at the 42 school. It's a great way to understand the inner workings of a shell.
+Welcome to 42sh, a Unix shell project. This project is a part of the curriculum at Epitech school. It's a great way to understand the inner workings of a shell.
 
 ## Features 🎁
 Built-in commands: cd, echo, exit, setenv, unsetenv, env, history, alias, and more.
