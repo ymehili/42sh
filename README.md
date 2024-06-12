@@ -40,4 +40,9 @@ For more details, check out the tester README.
 
 ## Contributing 🤝
 Thanks to:
+- Spencer
+- Ma maman
+- La planète
+- Macron
+- Théo
 
